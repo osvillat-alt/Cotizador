@@ -1,0 +1,2261 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#7c3aed" />
+  <title>MCM Pastelería</title>
+
+  <style>
+    :root {
+      --bg: #f7f2ea;
+      --card: #ffffff;
+      --text: #1f1f1f;
+      --muted: #6b6b6b;
+      --line: #e7ddd1;
+      --primary: #7c3aed;
+      --primary-soft: #efe7ff;
+      --danger: #dc2626;
+      --danger-soft: #ffe1e1;
+      --success: #16a34a;
+      --success-soft: #dcfce7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding-bottom: 92px;
+    }
+
+    .topbar {
+      padding: 18px 16px 8px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .topbar p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 12px 16px 20px;
+    }
+
+    .tab {
+      display: none;
+    }
+
+    .tab.active {
+      display: block;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 20px rgba(31, 31, 31, 0.05);
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    h3 {
+      margin: 14px 0 8px;
+      font-size: 15px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--muted);
+      margin: 12px 0 6px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 16px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 74px;
+      resize: vertical;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1.2fr 0.7fr 0.7fr;
+      gap: 8px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 92px 46px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .summary-row,
+    .list-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px dashed var(--line);
+      font-size: 15px;
+    }
+
+    .summary-row:last-child,
+    .list-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-row.total {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .btn.primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn.secondary {
+      background: var(--primary-soft);
+      color: #4c1d95;
+    }
+
+    .btn.danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .btn-row .btn {
+      margin-top: 0;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      background: rgba(255, 255, 255, 0.98);
+      border-top: 1px solid var(--line);
+      padding: 7px 6px calc(8px + env(safe-area-inset-bottom));
+      z-index: 60;
+    }
+
+    .nav-btn {
+      flex: 1;
+      border: none;
+      background: none;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 7px 4px;
+    }
+
+    .nav-btn.active {
+      color: var(--primary);
+    }
+
+    .icon {
+      display: block;
+      font-size: 21px;
+      margin-bottom: 3px;
+    }
+
+    .small-btn {
+      border: none;
+      background: var(--primary-soft);
+      color: #4c1d95;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .danger-small {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .quote-item,
+    .order-item,
+    .recipe-card,
+    .sale-item {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .quote-item:last-child,
+    .order-item:last-child,
+    .recipe-card:last-child,
+    .sale-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 800;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 9px;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-right: 6px;
+      margin-top: 6px;
+      background: #f3f4f6;
+    }
+
+    .ok {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .warn {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .notice {
+      background: #f8f5ff;
+      border: 1px solid #ddd6fe;
+      color: #4c1d95;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.4;
+      margin-top: 10px;
+    }
+
+    details {
+      border-top: 1px dashed var(--line);
+      padding-top: 8px;
+      margin-top: 8px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    @media (max-width: 420px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <h1>MCM Pastelería</h1>
+    <p>Cotizador, pedidos, recetas e insumos desde el celular</p>
+  </header>
+
+  <main class="container">
+
+    <!-- ========================= -->
+    <!-- TAB COTIZAR               -->
+    <!-- ========================= -->
+    <section id="tab-cotizar" class="tab active">
+      <div class="card">
+        <h2>Cliente</h2>
+
+        <label>Nombre</label>
+        <input id="qCliente" placeholder="Nombre del cliente" />
+
+        <label>Notas</label>
+        <textarea id="qNotas" placeholder="Decoración, entrega, anticipo, sabor..."></textarea>
+      </div>
+
+      <div class="card">
+        <h2>Pastel</h2>
+
+        <label>Tamaño</label>
+        <select id="qSize" onchange="onSizeChange()"></select>
+
+        <label>Costo base de receta</label>
+        <input id="qBase" type="number" inputmode="decimal" step="0.01" min="0" oninput="renderQuoteSummary()" />
+
+        <div class="grid">
+          <div>
+            <label>Pan</label>
+            <select id="qPan" onchange="renderQuoteSummary()"></select>
+          </div>
+
+          <div>
+            <label>Consistencia</label>
+            <select id="qConsistencia" onchange="renderQuoteSummary()"></select>
+          </div>
+
+          <div>
+            <label>Relleno</label>
+            <select id="qRelleno" onchange="renderQuoteSummary()"></select>
+          </div>
+
+          <div>
+            <label>Betún</label>
+            <select id="qBetun" onchange="renderQuoteSummary()"></select>
+          </div>
+        </div>
+
+        <label>Diseño</label>
+        <select id="qDiseno" onchange="renderQuoteSummary()"></select>
+      </div>
+
+      <div class="card">
+        <h2>Costos y utilidad</h2>
+
+        <div class="grid">
+          <div>
+            <label>Merma %</label>
+            <input id="qMerma" type="number" inputmode="decimal" step="0.1" oninput="renderQuoteSummary()" />
+          </div>
+
+          <div>
+            <label>Utilidad sobre precio %</label>
+            <input id="qMargen" type="number" inputmode="decimal" step="1" oninput="renderQuoteSummary()" />
+          </div>
+        </div>
+
+        <label style="display:flex; align-items:center; gap:8px; margin-top:12px;">
+          <input id="qRound" type="checkbox" style="width:auto" onchange="renderQuoteSummary()" />
+          Redondear precio final a decena
+        </label>
+
+        <div class="notice">
+          Fórmula usada: <b>Precio = Costo con merma / (1 - utilidad)</b>.<br />
+          Si quieres precio = costo × 2, usa <b>50%</b> de utilidad.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Extras personalizados</h2>
+
+        <div class="row">
+          <input id="quoteExtraName" placeholder="Ej. Molde, frase, topper" />
+          <input id="quoteExtraCost" type="number" inputmode="decimal" step="0.01" placeholder="$" />
+          <button class="small-btn" onclick="addQuoteExtra()">+</button>
+        </div>
+
+        <div id="quoteExtrasList"></div>
+      </div>
+
+      <div class="card">
+        <h2>Resumen</h2>
+        <div id="quoteSummary"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn primary" onclick="saveQuote(false)">Guardar cotización</button>
+        <button class="btn secondary" onclick="saveQuote(true)">Guardar + pedido</button>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn secondary" onclick="shareCurrentQuote()">WhatsApp</button>
+        <button class="btn danger" onclick="clearQuote()">Limpiar</button>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h2>Cotizaciones guardadas</h2>
+        <div id="quotesList"></div>
+      </div>
+    </section>
+
+    <!-- ========================= -->
+    <!-- TAB PEDIDOS               -->
+    <!-- ========================= -->
+    <section id="tab-pedidos" class="tab">
+      <div class="card">
+        <h2>Nuevo pedido</h2>
+
+        <label>Nombre</label>
+        <input id="orderName" placeholder="Cliente" />
+
+        <label>Producto</label>
+        <input id="orderProduct" placeholder="Pastel 22 cm, pay, maceta..." />
+
+        <div class="grid">
+          <div>
+            <label>Costo / Precio</label>
+            <input id="orderCost" type="number" inputmode="decimal" step="0.01" placeholder="0.00" />
+          </div>
+
+          <div>
+            <label>Estado</label>
+            <select id="orderStatus">
+              <option>Pendiente</option>
+              <option>Producción</option>
+              <option>Entregado</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Fecha</label>
+            <input id="orderDate" type="date" />
+          </div>
+
+          <div>
+            <label>Hora</label>
+            <input id="orderTime" type="time" />
+          </div>
+
+          <div>
+            <label>Pan</label>
+            <input id="orderPan" placeholder="Vainilla, chocolate..." />
+          </div>
+
+          <div>
+            <label>Betún</label>
+            <input id="orderBetun" placeholder="Chantilly, queso crema..." />
+          </div>
+        </div>
+
+        <label>Notas</label>
+        <textarea id="orderNotes" placeholder="Detalles del pedido..."></textarea>
+
+        <button class="btn primary" onclick="addOrder()">Agregar pedido</button>
+      </div>
+
+      <div class="card">
+        <h2>Pedidos</h2>
+        <div id="ordersSummary"></div>
+        <div id="ordersList"></div>
+      </div>
+    </section>
+
+    <!-- ========================= -->
+    <!-- TAB RECETAS               -->
+    <!-- ========================= -->
+    <section id="tab-recetas" class="tab">
+      <div class="card">
+        <h2>Nueva receta / costo</h2>
+
+        <label>Nombre de receta</label>
+        <input id="recipeName" placeholder="Betún de queso crema, bizcocho..." />
+
+        <div class="grid">
+          <div>
+            <label>Rendimiento</label>
+            <input id="recipeYield" placeholder="1 molde 22 cm, 10 piezas..." />
+          </div>
+
+          <div>
+            <label>Notas</label>
+            <input id="recipeNotes" placeholder="Opcional" />
+          </div>
+        </div>
+
+        <h3>Agregar ingrediente</h3>
+
+        <label>Insumo</label>
+        <select id="recipeInsumo"></select>
+
+        <div class="grid-3">
+          <div>
+            <label>Cantidad</label>
+            <input id="recipeQty" type="number" inputmode="decimal" step="0.01" placeholder="0" />
+          </div>
+
+          <div>
+            <label>Unidad</label>
+            <input id="recipeUnit" placeholder="gr / ml / ea" />
+          </div>
+
+          <div>
+            <label>Costo unitario</label>
+            <input id="recipeUnitCost" type="number" inputmode="decimal" step="0.0001" placeholder="Auto" />
+          </div>
+        </div>
+
+        <button class="btn secondary" onclick="addRecipeIngredient()">Agregar ingrediente</button>
+
+        <div id="recipeIngredientsList" style="margin-top:12px;"></div>
+
+        <button class="btn primary" onclick="saveRecipe()">Guardar receta</button>
+      </div>
+
+      <div class="card">
+        <h2>Recetario</h2>
+        <div class="notice">
+          Se precargaron recetas de tu Excel. Algunas pueden requerir revisión porque el archivo tenía errores o valores incompletos.
+        </div>
+        <div id="recipesList" style="margin-top:10px;"></div>
+      </div>
+    </section>
+
+    <!-- ========================= -->
+    <!-- TAB INSUMOS               -->
+    <!-- ========================= -->
+    <section id="tab-insumos" class="tab">
+      <div class="card">
+        <h2>Nuevo insumo</h2>
+
+        <label>Nombre</label>
+        <input id="insumoName" placeholder="Queso crema, azúcar, caja..." />
+
+        <div class="grid">
+          <div>
+            <label>Presentación</label>
+            <input id="insumoPresentation" placeholder="200, 1000, 1..." />
+          </div>
+
+          <div>
+            <label>Unidad</label>
+            <input id="insumoUm" placeholder="gr / ml / ea" />
+          </div>
+
+          <div>
+            <label>Precio</label>
+            <input id="insumoPrice" type="number" inputmode="decimal" step="0.01" placeholder="0.00" />
+          </div>
+
+          <div>
+            <label>Costo unitario</label>
+            <input id="insumoUnitCost" type="number" inputmode="decimal" step="0.0001" placeholder="Auto" />
+          </div>
+        </div>
+
+        <button class="btn primary" onclick="addInsumo()">Guardar insumo</button>
+      </div>
+
+      <div class="card">
+        <h2>Insumos</h2>
+
+        <label>Buscar</label>
+        <input id="insumoSearch" placeholder="Buscar insumo..." oninput="renderInsumos()" />
+
+        <div id="insumosList" style="margin-top:10px;"></div>
+      </div>
+    </section>
+
+    <!-- ========================= -->
+    <!-- TAB AJUSTES               -->
+    <!-- ========================= -->
+    <section id="tab-ajustes" class="tab">
+      <div class="card">
+        <h2>Ajustes de cálculo</h2>
+
+        <div class="grid">
+          <div>
+            <label>Merma por defecto %</label>
+            <input id="setMerma" type="number" inputmode="decimal" step="0.1" />
+          </div>
+
+          <div>
+            <label>Utilidad por defecto %</label>
+            <input id="setMargen" type="number" inputmode="decimal" step="1" />
+          </div>
+        </div>
+
+        <label style="display:flex; align-items:center; gap:8px; margin-top:12px;">
+          <input id="setRound" type="checkbox" style="width:auto" />
+          Redondear por defecto a decena
+        </label>
+
+        <button class="btn primary" onclick="saveSettings()">Guardar ajustes</button>
+      </div>
+
+      <div class="card">
+        <h2>Tamaños</h2>
+
+        <div class="grid">
+          <div>
+            <label>Tamaño</label>
+            <input id="sizeLabel" placeholder="25 cm" />
+          </div>
+
+          <div>
+            <label>Costo base</label>
+            <input id="sizeBase" type="number" inputmode="decimal" step="0.01" placeholder="0.00" />
+          </div>
+        </div>
+
+        <button class="btn secondary" onclick="addSize()">Agregar tamaño</button>
+
+        <div id="sizesList" style="margin-top:10px;"></div>
+      </div>
+
+      <div class="card">
+        <h2>Extras del cotizador</h2>
+
+        <div class="grid">
+          <div>
+            <label>Categoría</label>
+            <select id="extraCat">
+              <option>Pan</option>
+              <option>Consistencia</option>
+              <option>Relleno</option>
+              <option>Betún</option>
+              <option>Diseño</option>
+              <option>Otro</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Opción</label>
+            <input id="extraOption" placeholder="Chocolate, nuez..." />
+          </div>
+
+          <div>
+            <label>Costo extra</label>
+            <input id="extraCost" type="number" inputmode="decimal" step="0.01" placeholder="0.00" />
+          </div>
+        </div>
+
+        <button class="btn secondary" onclick="addExtra()">Agregar extra</button>
+
+        <div id="extrasList" style="margin-top:10px;"></div>
+      </div>
+
+      <div class="card">
+        <h2>Ventas</h2>
+
+        <div class="grid">
+          <div>
+            <label>Concepto</label>
+            <input id="saleConcept" placeholder="Pastel cliente..." />
+          </div>
+
+          <div>
+            <label>Monto</label>
+            <input id="saleAmount" type="number" inputmode="decimal" step="0.01" placeholder="0.00" />
+          </div>
+
+          <div>
+            <label>Mes</label>
+            <input id="saleMonth" placeholder="JUNIO" />
+          </div>
+        </div>
+
+        <button class="btn secondary" onclick="addSale()">Agregar venta</button>
+
+        <div id="salesSummary" style="margin-top:10px;"></div>
+        <div id="salesList"></div>
+      </div>
+
+      <div class="card">
+        <h2>Datos y respaldo</h2>
+
+        <button class="btn secondary" onclick="exportData()">Exportar respaldo JSON</button>
+
+        <label>Importar respaldo</label>
+        <input id="importFile" type="file" accept=".json" onchange="importData(event)" />
+
+        <button class="btn danger" onclick="resetData()">Borrar todo y restablecer</button>
+
+        <div class="notice">
+          Los datos se guardan en el navegador/celular. Haz respaldos con “Exportar respaldo JSON” por si borras caché o cambias de equipo.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button id="nav-cotizar" class="nav-btn active" onclick="showTab('cotizar')">
+      <span class="icon"></span>
+      Cotizar
+    </button>
+
+    <button id="nav-pedidos" class="nav-btn" onclick="showTab('pedidos')">
+      <span class="icon"></span>
+      Pedidos
+    </button>
+
+    <button id="nav-recetas" class="nav-btn" onclick="showTab('recetas')">
+      <span class="icon"></span>
+      Recetas
+    </button>
+
+    <button id="nav-insumos" class="nav-btn" onclick="showTab('insumos')">
+      <span class="icon"></span>
+      Insumos
+    </button>
+
+    <button id="nav-ajustes" class="nav-btn" onclick="showTab('ajustes')">
+      <span class="icon">⚙️</span>
+      Ajustes
+    </button>
+  </nav>
+
+  <script>
+    const DB_KEY = "mcm_full_v1";
+
+    const SEED = {
+      settings: {
+        merma: 10,
+        margen: 30,
+        round: true
+      },
+
+      sizes: [
+        { label: "18 cm", base: 0 },
+        { label: "20 cm", base: 0 },
+        { label: "22 cm", base: 233.24 }
+      ],
+
+      extras: [
+        { cat: "Pan", option: "Chocolate", cost: 40 },
+        { cat: "Pan", option: "Almendra", cost: 60 },
+        { cat: "Consistencia", option: "Tres leches", cost: 70 },
+        { cat: "Relleno", option: "Fruta", cost: 40 },
+        { cat: "Relleno", option: "Nuez", cost: 70 },
+        { cat: "Betún", option: "Queso crema", cost: 60 },
+        { cat: "Diseño", option: "Personalizado", cost: 150 },
+        { cat: "Diseño", option: "Muy elaborado", cost: 250 }
+      ],
+
+      insumos: [
+        { n: "3 leches", p: 1, u: "ea", pr: 68, c: 68 },
+        { n: "Aceite", p: 900, u: "ml", pr: 35, c: 0.04 },
+        { n: "Azúcar glass", p: 500, u: "gr", pr: 28, c: 0.06 },
+        { n: "Azúcar mascabado", p: 500, u: "gr", pr: 25, c: 0.05 },
+        { n: "Azúcar morena", p: 900, u: "gr", pr: 26, c: 0.03 },
+        { n: "Azúcar refinada", p: 1000, u: "gr", pr: 39.9, c: 0.04 },
+        { n: "BASE 20 CM", p: 1, u: "EA", pr: 5.95, c: 5.95 },
+        { n: "Base 25cm", p: 1, u: "ea", pr: 12.5, c: 12.5 },
+        { n: "BASE 28 CM", p: 1, u: "EA", pr: 6.45, c: 6.45 },
+        { n: "Base pay", p: 1, u: "ea", pr: 40, c: 40 },
+        { n: "Bisagra individual", p: 1, u: "ea", pr: 2.7, c: 2.7 },
+        { n: "Bisagra pay", p: 1, u: "ea", pr: 2.35, c: 2.35 },
+        { n: "CAJA 10X10X5", p: 1, u: "EA", pr: 20.9, c: 20.9 },
+        { n: "Caja 12x12x6", p: 1, u: "ea", pr: 25, c: 25 },
+        { n: "Caja blanca 8X8X5", p: 1, u: "EA", pr: 9, c: 9 },
+        { n: "Caja con ventana 10x10x5", p: 1, u: "ea", pr: 22.65, c: 22.65 },
+        { n: "Caja kraft 8x8x5", p: 1, u: "ea", pr: 8.6, c: 8.6 },
+        { n: "Canela", p: 300, u: "gr", pr: 170, c: 0.57 },
+        { n: "Chantilly", p: 1000, u: "ml", pr: 94, c: 0.094 },
+        { n: "Chantilly", p: 450, u: "gr", pr: 51, c: 0.11 },
+        { n: "Chantilly azul", p: 500, u: "ml", pr: 30, c: 0.06 },
+        { n: "Chispas de chocolate", p: 250, u: "GR", pr: 60, c: 0.24 },
+        { n: "COCOA HERSHEYS", p: 100, u: "GR", pr: 34, c: 0.34 },
+        { n: "Crema acida lala", p: 426, u: "ml", pr: 47, c: 0.11 },
+        { n: "DOMO 12 CM", p: 1, u: "EA", pr: 3, c: 3 },
+        { n: "Domo 25 cm", p: 1, u: "ea", pr: 16.45, c: 16.45 },
+        { n: "Dulce de Leche", p: 360, u: "gr", pr: 49.9, c: 0.14 },
+        { n: "Escencia vainilla", p: 10000, u: "ml", pr: 140, c: 0.01 },
+        { n: "Escencia vainilla", p: 150, u: "ml", pr: 21, c: 0.14 },
+        { n: "Evaporada", p: 945, u: "ml", pr: 53, c: 0.06 },
+        { n: "Frambuesa", p: 1, u: "ea", pr: 60, c: 60 },
+        { n: "Galleta maria", p: 1, u: "ea", pr: 17, c: 17 },
+        { n: "Galleta oreo", p: 1, u: "ea", pr: 10, c: 10 },
+        { n: "Ganashe chocolate", p: 10000, u: "gr", pr: 108, c: 0.01 },
+        { n: "Harina alta proteína", p: 10000, u: "gr", pr: 25, c: 0.0025 },
+        { n: "Harina extra esponja", p: 1000, u: "gr", pr: 80, c: 0.08 },
+        { n: "Harina para galleta", p: 1, u: "ea", pr: 85, c: 85 },
+        { n: "Harina preparada", p: 1000, u: "gr", pr: 80, c: 0.08 },
+        { n: "Harina Redvelvet 375 gr", p: 1, u: "ea", pr: 60, c: 60 },
+        { n: "Harina vainilla ultra", p: 1000, u: "gr", pr: 77, c: 0.08 },
+        { n: "Harina Zanahoria", p: 500, u: "gr", pr: 45, c: 0.09 },
+        { n: "Huevo", p: 30, u: "EA", pr: 100, c: 3.3333333333 },
+        { n: "Leche", p: 1000, u: "ml", pr: 35, c: 0.035 },
+        { n: "Lechera", p: 375, u: "gr", pr: 32, c: 0.09 },
+        { n: "Levadura", p: 5, u: "EA", pr: 24, c: 4.8 },
+        { n: "Limón", p: 1000, u: "gr", pr: 44, c: 0.04 },
+        { n: "Maizena", p: 160, u: "gr", pr: 26, c: 0.16 },
+        { n: "Mantequilla chilchota", p: 1000, u: "gr", pr: 180, c: 0.18 },
+        { n: "Mantequilla", p: 90, u: "gr", pr: 20, c: 0.2222222222 },
+        { n: "Mermelada", p: 350, u: "gr", pr: 38, c: 0.11 },
+        { n: "Nuez", p: 100, u: "gr", pr: 60, c: 0.6 },
+        { n: "Nutella", p: 1000, u: "gr", pr: 120, c: 0.12 },
+        { n: "Queso crema", p: 200, u: "gr", pr: 50, c: 0.25 },
+        { n: "Harina creamy cake provedora", p: 1000, u: "gr", pr: 86, c: 0.09 },
+        { n: "Cocoa alpezzi", p: 250, u: "gr", pr: 140, c: 0.56 },
+        { n: "Zanahoria", p: 1, u: "ea", pr: 0.5, c: 0.5 },
+        { n: "Bicarbonato", p: 1000, u: "gr", pr: 40, c: 0.04 },
+        { n: "Rexal", p: 1000, u: "gr", pr: 40, c: 0.04 },
+        { n: "Chocolate semiamargo", p: 1000, u: "gr", pr: 240, c: 0.24 }
+      ],
+
+      recipes: [
+        {
+          id: 1,
+          name: "Betún de queso crema",
+          total: 93.94,
+          unit: null,
+          yield: "Para pastel",
+          notes: "Receta base del Excel",
+          ingredients: [
+            { i: "Queso crema", qty: 200, u: "gr", cost: 0.25, total: 50 },
+            { i: "Azúcar glass", qty: 300, u: "gr", cost: 0.06, total: 16.8 },
+            { i: "Escencia vainilla", qty: 10, u: "ml", cost: 0.01, total: 0.14 },
+            { i: "Mantequilla chilchota", qty: 150, u: "gr", cost: 0.18, total: 27 }
+          ]
+        },
+        { id: 2, name: "Glaseado de queso crema", total: 51.26, unit: 8.36, yield: "", notes: "Revisar cantidades del Excel", ingredients: [] },
+        { id: 3, name: "Bizcocho para 3 leches PEE", total: 115.79, unit: 57.9, yield: "2 moldes 22 cm", notes: "", ingredients: [] },
+        { id: 4, name: "Bizcocho redvelvet / Betty Crocker", total: 464.37, unit: null, yield: "1 molde 22 cm", notes: "Revisar: en Excel aparece costo alto por chispas", ingredients: [] },
+        { id: 5, name: "Cheescake alto", total: 179.54, unit: 22.44, yield: "Molde 22 cm, 8 rebanadas", notes: "", ingredients: [] },
+        { id: 6, name: "Roles de canela", total: 45.6, unit: 4.56, yield: "10 piezas", notes: "", ingredients: [] },
+        { id: 7, name: "Bizcocho redvelvet (versión 2)", total: 89.06, unit: 44.53, yield: "1 molde 22 cm", notes: "", ingredients: [] },
+        { id: 8, name: "Galletas Betty Crocker", total: 92.56, unit: 8.36, yield: "11 galletas 55 gr", notes: "", ingredients: [] },
+        { id: 9, name: "Bizcocho Zanahoria", total: 90.24, unit: null, yield: "1 molde 22 cm", notes: "", ingredients: [] },
+        { id: 10, name: "Pan de plátano", total: 59.45, unit: 5.4, yield: "11 rebanadas", notes: "", ingredients: [] },
+        { id: 11, name: "Pay convencional", total: 243.22, unit: 121.61, yield: "2 pays completos", notes: "", ingredients: [] },
+        { id: 12, name: "Betún mantequilla", total: 75.86, unit: null, yield: "", notes: "", ingredients: [] },
+        { id: 13, name: "Bizcocho húmedo", total: 117.93, unit: 58.97, yield: "2 moldes 22 cm", notes: "", ingredients: [] },
+        { id: 14, name: "Brownie", total: 149.63, unit: null, yield: "", notes: "Revisar ingredientes del Excel", ingredients: [] },
+        { id: 15, name: "Bizcocho creamy cake proveedora", total: 129.26, unit: 64.63, yield: "2 moldes 22 cm", notes: "", ingredients: [] }
+      ],
+
+      quotes: [
+        {
+          id: 1,
+          createdAt: "Ejemplo",
+          cliente: "Ejemplo",
+          notas: "Cotización basada en tu hoja Cotizador",
+          size: "22 cm",
+          base: 233.24,
+          pan: "Vainilla",
+          panCost: 0,
+          consistencia: "Tres leches",
+          consistenciaCost: 70,
+          relleno: "Nuez",
+          rellenoCost: 70,
+          betun: "Chantilly",
+          betunCost: 0,
+          diseno: "Sencillo",
+          disenoCost: 0,
+          merma: 10,
+          margen: 30,
+          round: true,
+          customExtras: [],
+          subtotal: 373.24,
+          costoConMerma: 410.57,
+          precioSugerido: 586.53,
+          precioFinal: 590
+        }
+      ],
+
+      orders: [
+        { id: 101, name: "Brayhan", cost: 360, date: "2026-06-05", time: "15:00", product: "Pay 18 cm tortuga", pan: "", betun: "", status: "Pendiente", notes: "" },
+        { id: 102, name: "MICHELLE", cost: 300, date: "2026-09-05", time: "13:30", product: "Zanahoria 18 cm", pan: "Zanahoria", betun: "queso crema", status: "Pendiente", notes: "" },
+        { id: 103, name: "Karime", cost: 280, date: "2026-09-05", time: "20:00", product: "Maceta gerbera", pan: "chocolate / fresas con crema", betun: "mantequilla blanco", status: "Pendiente", notes: "" },
+        { id: 104, name: "Suegris", cost: 250, date: "2026-09-05", time: "19:30", product: "Maceta gerbera", pan: "chocolate / fresas con crema", betun: "mantequilla blanco", status: "Pendiente", notes: "" },
+        { id: 105, name: "Abuelita Oscar", cost: 250, date: "2026-09-05", time: "19:30", product: "Maceta gerbera", pan: "Zanahoria", betun: "mantequilla blanco", status: "Pendiente", notes: "" },
+        { id: 106, name: "Samantha", cost: 240, date: "2026-09-05", time: "07:00", product: "Mini cake rosa", pan: "Zanahoria", betun: "mantequilla blanco", status: "Pendiente", notes: "" },
+        { id: 107, name: "Abiud", cost: 650, date: "2026-09-05", time: "07:00", product: "Zanahoria doble 22 cm", pan: "Zanahoria", betun: "queso crema", status: "Pendiente", notes: "" },
+        { id: 108, name: "Abiud", cost: 600, date: "2026-09-05", time: "07:00", product: "Chocolate doble 22 cm", pan: "chocolate", betun: "Chantilly", status: "Pendiente", notes: "" },
+        { id: 109, name: "Mariana", cost: 380, date: "2026-10-05", time: "12:00", product: "Pay 22 cm Frambuesa", pan: "", betun: "Chantilly", status: "Pendiente", notes: "" }
+      ],
+
+      sales: [
+        { id: 201, month: "JUNIO", concept: "Pastel Saúl", amount: 1100 },
+        { id: 202, month: "JUNIO", concept: "Pastel Karime L", amount: 550 },
+        { id: 203, month: "JUNIO", concept: "Pastel Karime Pa", amount: 550 },
+        { id: 204, month: "JUNIO", concept: "Pastel mamá Karime", amount: 550 },
+        { id: 205, month: "JUNIO", concept: "Pastel Jesús", amount: 410 },
+        { id: 206, month: "JUNIO", concept: "Flan Saúl", amount: 130 },
+        { id: 207, month: "JUNIO", concept: "Pastel Karime almendra", amount: 150 }
+      ]
+    };
+
+    let db = null;
+    let quoteExtras = [];
+    let recipeIngredients = [];
+
+    function seedCopy() {
+      return JSON.parse(JSON.stringify(SEED));
+    }
+
+    function loadDB() {
+      try {
+        const raw = localStorage.getItem(DB_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const base = seedCopy();
+          return {
+            ...base,
+            ...parsed,
+            settings: {
+              ...base.settings,
+              ...(parsed.settings || {})
+            }
+          };
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      return seedCopy();
+    }
+
+    function saveDB() {
+      try {
+        localStorage.setItem(DB_KEY, JSON.stringify(db));
+      } catch (e) {
+        alert("No se pudo guardar en este navegador. Intenta usar la app publicada en línea.");
+      }
+    }
+
+    function uid() {
+      return Date.now() + Math.floor(Math.random() * 10000);
+    }
+
+    function fmt(n) {
+      return "$" + Number(n || 0).toLocaleString("es-MX", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function esc(s) {
+      return String(s || "").replace(/[&<>"']/g, function (c) {
+        return {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        }[c];
+      });
+    }
+
+    function val(id) {
+      const el = document.getElementById(id);
+      return el ? el.value : "";
+    }
+
+    function numVal(id) {
+      const el = document.getElementById(id);
+      return parseFloat(el ? el.value : 0) || 0;
+    }
+
+    function showTab(name) {
+      document.querySelectorAll(".tab").forEach(function (t) {
+        t.classList.remove("active");
+      });
+
+      document.querySelectorAll(".nav-btn").forEach(function (b) {
+        b.classList.remove("active");
+      });
+
+      document.getElementById("tab-" + name).classList.add("active");
+      document.getElementById("nav-" + name).classList.add("active");
+      window.scrollTo(0, 0);
+    }
+
+    /* ============================= */
+    /* SETTINGS                      */
+    /* ============================= */
+
+    function renderSettings() {
+      document.getElementById("setMerma").value = db.settings.merma;
+      document.getElementById("setMargen").value = db.settings.margen;
+      document.getElementById("setRound").checked = !!db.settings.round;
+    }
+
+    function applySettingsToQuoteForm() {
+      document.getElementById("qMerma").value = db.settings.merma;
+      document.getElementById("qMargen").value = db.settings.margen;
+      document.getElementById("qRound").checked = !!db.settings.round;
+    }
+
+    function saveSettings() {
+      db.settings = {
+        merma: numVal("setMerma"),
+        margen: numVal("setMargen"),
+        round: document.getElementById("setRound").checked
+      };
+
+      saveDB();
+      applySettingsToQuoteForm();
+      renderQuoteSummary();
+      alert("Ajustes guardados.");
+    }
+
+    /* ============================= */
+    /* COTIZADOR                     */
+    /* ============================= */
+
+    function quoteOptions(cat) {
+      const defaults = {
+        "Pan": [{ label: "Vainilla", cost: 0 }],
+        "Consistencia": [{ label: "Normal", cost: 0 }],
+        "Relleno": [{ label: "Sin relleno", cost: 0 }],
+        "Betún": [
+          { label: "Chantilly", cost: 0 },
+          { label: "Mantequilla", cost: 0 }
+        ],
+        "Diseño": [{ label: "Sencillo", cost: 0 }]
+      }[cat] || [];
+
+      const extras = db.extras
+        .filter(function (e) {
+          return e.cat === cat;
+        })
+        .map(function (e) {
+          return {
+            label: e.option,
+            cost: Number(e.cost) || 0
+          };
+        });
+
+      return defaults.concat(extras);
+    }
+
+    function selectedSize() {
+      const el = document.getElementById("qSize");
+      const idx = el ? (Number(el.value) || 0) : 0;
+      return db.sizes[idx] || db.sizes[0];
+    }
+
+    function selectedQuoteOption(cat, id) {
+      const opts = quoteOptions(cat);
+      const el = document.getElementById(id);
+      const idx = el ? (Number(el.value) || 0) : 0;
+      return opts[idx] || opts[0];
+    }
+
+    function fillSizeSelect(selectedLabel) {
+      const el = document.getElementById("qSize");
+      if (!el) return;
+
+      el.innerHTML = db.sizes
+        .map(function (s, i) {
+          return `<option value="${i}">${esc(s.label)} · ${fmt(s.base)}</option>`;
+        })
+        .join("");
+
+      let idx = db.sizes.findIndex(function (s) {
+        return s.label === selectedLabel;
+      });
+
+      if (idx < 0) {
+        idx = db.sizes.findIndex(function (s) {
+          return String(s.label).includes("22");
+        });
+      }
+
+      if (idx < 0) idx = 0;
+
+      el.value = String(idx);
+    }
+
+    function fillQuoteSelect(id, cat, selectedLabel) {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const opts = quoteOptions(cat);
+
+      el.innerHTML = opts
+        .map(function (o, i) {
+          return `<option value="${i}">${esc(o.label)}${o.cost ? " +" + fmt(o.cost) : ""}</option>`;
+        })
+        .join("");
+
+      let idx = opts.findIndex(function (o) {
+        return o.label === selectedLabel;
+      });
+
+      if (idx < 0) idx = 0;
+
+      el.value = String(idx);
+    }
+
+    function renderCotizadorSelects() {
+      const sizeEl = document.getElementById("qSize");
+      const hasOptions = sizeEl && sizeEl.options.length > 0;
+
+      const currentSize = hasOptions ? selectedSize().label : "22 cm";
+      const currentPan = hasOptions ? selectedQuoteOption("Pan", "qPan").label : "Vainilla";
+      const currentCons = hasOptions ? selectedQuoteOption("Consistencia", "qConsistencia").label : "Tres leches";
+      const currentRelleno = hasOptions ? selectedQuoteOption("Relleno", "qRelleno").label : "Nuez";
+      const currentBetun = hasOptions ? selectedQuoteOption("Betún", "qBetun").label : "Chantilly";
+      const currentDiseno = hasOptions ? selectedQuoteOption("Diseño", "qDiseno").label : "Sencillo";
+
+      const currentBase = val("qBase");
+
+      fillSizeSelect(currentSize);
+      fillQuoteSelect("qPan", "Pan", currentPan);
+      fillQuoteSelect("qConsistencia", "Consistencia", currentCons);
+      fillQuoteSelect("qRelleno", "Relleno", currentRelleno);
+      fillQuoteSelect("qBetun", "Betún", currentBetun);
+      fillQuoteSelect("qDiseno", "Diseño", currentDiseno);
+
+      if (currentBase !== "") {
+        document.getElementById("qBase").value = currentBase;
+      } else {
+        setBaseFromSize();
+      }
+
+      renderQuoteSummary();
+    }
+
+    function setBaseFromSize() {
+      const s = selectedSize();
+      document.getElementById("qBase").value = Number(s.base || 0).toFixed(2);
+    }
+
+    function onSizeChange() {
+      setBaseFromSize();
+      renderQuoteSummary();
+    }
+
+    function calcQuote() {
+      const size = selectedSize();
+
+      const base = numVal("qBase");
+
+      const pan = selectedQuoteOption("Pan", "qPan");
+      const consistencia = selectedQuoteOption("Consistencia", "qConsistencia");
+      const relleno = selectedQuoteOption("Relleno", "qRelleno");
+      const betun = selectedQuoteOption("Betún", "qBetun");
+      const diseno = selectedQuoteOption("Diseño", "qDiseno");
+
+      const builtInExtras =
+        Number(pan.cost || 0) +
+        Number(consistencia.cost || 0) +
+        Number(relleno.cost || 0) +
+        Number(betun.cost || 0) +
+        Number(diseno.cost || 0);
+
+      const customTotal = quoteExtras.reduce(function (sum, item) {
+        return sum + Number(item.cost || 0);
+      }, 0);
+
+      const subtotal = base + builtInExtras + customTotal;
+
+      const merma = numVal("qMerma");
+      const costoConMerma = subtotal * (1 + merma / 100);
+
+      const margen = numVal("qMargen");
+
+      let precioSugerido = costoConMerma;
+
+      if (margen > 0 && margen < 100) {
+        precioSugerido = costoConMerma / (1 - margen / 100);
+      } else if (margen >= 100) {
+        precioSugerido = costoConMerma * (1 + margen / 100);
+      }
+
+      const round = document.getElementById("qRound").checked;
+      const precioFinal = round ? Math.ceil(precioSugerido / 10) * 10 : precioSugerido;
+
+      return {
+        size: size.label,
+        base: base,
+        pan: pan,
+        consistencia: consistencia,
+        relleno: relleno,
+        betun: betun,
+        diseno: diseno,
+        builtInExtras: builtInExtras,
+        customTotal: customTotal,
+        subtotal: subtotal,
+        merma: merma,
+        costoConMerma: costoConMerma,
+        margen: margen,
+        precioSugerido: precioSugerido,
+        precioFinal: precioFinal
+      };
+    }
+
+    function renderQuoteSummary() {
+      const c = calcQuote();
+
+      const rows = [
+        ["Tamaño", c.size],
+        ["Costo base", fmt(c.base)],
+        ["Pan", c.pan.label + (c.pan.cost ? " +" + fmt(c.pan.cost) : "")],
+        ["Consistencia", c.consistencia.label + (c.consistencia.cost ? " +" + fmt(c.consistencia.cost) : "")],
+        ["Relleno", c.relleno.label + (c.relleno.cost ? " +" + fmt(c.relleno.cost) : "")],
+        ["Betún", c.betun.label + (c.betun.cost ? " +" + fmt(c.betun.cost) : "")],
+        ["Diseño", c.diseno.label + (c.diseno.cost ? " +" + fmt(c.diseno.cost) : "")],
+        ["Extras integrados", fmt(c.builtInExtras)],
+        ["Extras personalizados", fmt(c.customTotal)],
+        ["Subtotal", fmt(c.subtotal)],
+        ["Merma (" + c.merma + "%)", fmt(c.costoConMerma - c.subtotal)],
+        ["Costo con merma", fmt(c.costoConMerma)],
+        ["Utilidad sobre precio (" + c.margen + "%)", fmt(c.precioSugerido - c.costoConMerma)],
+        ["Precio sugerido", fmt(c.precioSugerido)],
+        ["Precio final", fmt(c.precioFinal)]
+      ];
+
+      document.getElementById("quoteSummary").innerHTML = rows
+        .map(function (row, index) {
+          const isTotal = index >= rows.length - 2;
+          return `
+            <div class="summary-row ${isTotal ? "total" : ""}">
+              <span>${esc(row[0])}</span>
+              <span>${esc(row[1])}</span>
+            </div>
+          `;
+        })
+        .join("");
+
+      renderQuoteExtras();
+    }
+
+    function renderQuoteExtras() {
+      const el = document.getElementById("quoteExtrasList");
+
+      if (!quoteExtras.length) {
+        el.innerHTML = '<div class="muted">Sin extras personalizados.</div>';
+        return;
+      }
+
+      el.innerHTML = quoteExtras
+        .map(function (item, idx) {
+          return `
+            <div class="summary-row">
+              <span>${esc(item.name)}</span>
+              <span>
+                ${fmt(item.cost)}
+                <button class="small-btn danger-small" onclick="removeQuoteExtra(${idx})">x</button>
+              </span>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function addQuoteExtra() {
+      const name = val("quoteExtraName").trim();
+      const cost = numVal("quoteExtraCost");
+
+      if (!name) {
+        alert("Escribe el nombre del extra.");
+        return;
+      }
+
+      quoteExtras.push({ name: name, cost: cost });
+
+      document.getElementById("quoteExtraName").value = "";
+      document.getElementById("quoteExtraCost").value = "";
+
+      renderQuoteSummary();
+    }
+
+    function removeQuoteExtra(index) {
+      quoteExtras.splice(index, 1);
+      renderQuoteSummary();
+    }
+
+    function getQuotePayload() {
+      const c = calcQuote();
+
+      return {
+        id: uid(),
+        createdAt: new Date().toLocaleString("es-MX"),
+        cliente: val("qCliente").trim() || "Cliente",
+        notas: val("qNotas").trim(),
+
+        size: c.size,
+        base: c.base,
+
+        pan: c.pan.label,
+        panCost: c.pan.cost,
+
+        consistencia: c.consistencia.label,
+        consistenciaCost: c.consistencia.cost,
+
+        relleno: c.relleno.label,
+        rellenoCost: c.relleno.cost,
+
+        betun: c.betun.label,
+        betunCost: c.betun.cost,
+
+        diseno: c.diseno.label,
+        disenoCost: c.diseno.cost,
+
+        merma: c.merma,
+        margen: c.margen,
+        round: document.getElementById("qRound").checked,
+
+        customExtras: quoteExtras.slice(),
+
+        subtotal: c.subtotal,
+        costoConMerma: c.costoConMerma,
+        precioSugerido: c.precioSugerido,
+        precioFinal: c.precioFinal
+      };
+    }
+
+    function saveQuote(createOrder) {
+      const q = getQuotePayload();
+
+      db.quotes.unshift(q);
+
+      if (createOrder) {
+        addOrderFromQuote(q, false);
+      }
+
+      saveDB();
+      renderQuotes();
+      renderOrders();
+
+      alert("Cotización guardada.");
+    }
+
+    function renderQuotes() {
+      const el = document.getElementById("quotesList");
+
+      if (!db.quotes.length) {
+        el.innerHTML = '<div class="muted">Todavía no hay cotizaciones guardadas.</div>';
+        return;
+      }
+
+      el.innerHTML = db.quotes
+        .map(function (q) {
+          return `
+            <div class="quote-item">
+              <div class="item-top">
+                <span>${esc(q.cliente)}</span>
+                <span>${fmt(q.precioFinal)}</span>
+              </div>
+
+              <div class="muted">
+                ${esc(q.createdAt)} · ${esc(q.size)} · ${esc(q.pan)} / ${esc(q.relleno)} / ${esc(q.betun)}
+              </div>
+
+              ${q.notas ? `<div class="muted">${esc(q.notas)}</div>` : ""}
+
+              <div class="actions">
+                <button class="small-btn" onclick="loadQuote(${q.id})">Abrir</button>
+                <button class="small-btn" onclick="shareQuote(${q.id})">WhatsApp</button>
+                <button class="small-btn" onclick="quoteToOrder(${q.id})">Pedido</button>
+                <button class="small-btn danger-small" onclick="deleteQuote(${q.id})">Eliminar</button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function loadQuote(id) {
+      const q = db.quotes.find(function (item) {
+        return item.id === id;
+      });
+
+      if (!q) return;
+
+      document.getElementById("qCliente").value = q.cliente || "";
+      document.getElementById("qNotas").value = q.notas || "";
+
+      fillSizeSelect(q.size);
+      document.getElementById("qBase").value = q.base;
+
+      fillQuoteSelect("qPan", "Pan", q.pan);
+      fillQuoteSelect("qConsistencia", "Consistencia", q.consistencia);
+      fillQuoteSelect("qRelleno", "Relleno", q.relleno);
+      fillQuoteSelect("qBetun", "Betún", q.betun);
+      fillQuoteSelect("qDiseno", "Diseño", q.diseno);
+
+      document.getElementById("qMerma").value = q.merma;
+      document.getElementById("qMargen").value = q.margen;
+      document.getElementById("qRound").checked = !!q.round;
+
+      quoteExtras = (q.customExtras || []).slice();
+
+      renderQuoteSummary();
+      showTab("cotizar");
+    }
+
+    function deleteQuote(id) {
+      if (!confirm("¿Eliminar esta cotización?")) return;
+
+      db.quotes = db.quotes.filter(function (q) {
+        return q.id !== id;
+      });
+
+      saveDB();
+      renderQuotes();
+    }
+
+    function buildQuoteMessage(q) {
+      const lines = [
+        "Cotización para " + q.cliente,
+        "Fecha: " + q.createdAt,
+        "Pastel: " + q.size,
+        "Pan: " + q.pan,
+        "Consistencia: " + q.consistencia,
+        "Relleno: " + q.relleno,
+        "Betún: " + q.betun,
+        "Diseño: " + q.diseno
+      ];
+
+      if (q.customExtras && q.customExtras.length) {
+        lines.push(
+          "Extras: " +
+            q.customExtras
+              .map(function (e) {
+                return e.name + " " + fmt(e.cost);
+              })
+              .join(", ")
+        );
+      }
+
+      lines.push("Costo con merma: " + fmt(q.costoConMerma));
+      lines.push("Precio final: " + fmt(q.precioFinal));
+
+      if (q.notas) {
+        lines.push("Notas: " + q.notas);
+      }
+
+      return lines.join("\n");
+    }
+
+    function openWhatsApp(text) {
+      window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
+    }
+
+    function shareCurrentQuote() {
+      const q = getQuotePayload();
+      openWhatsApp(buildQuoteMessage(q));
+    }
+
+    function shareQuote(id) {
+      const q = db.quotes.find(function (item) {
+        return item.id === id;
+      });
+
+      if (!q) return;
+
+      openWhatsApp(buildQuoteMessage(q));
+    }
+
+    function clearQuote() {
+      if (!confirm("¿Limpiar formulario?")) return;
+
+      document.getElementById("qCliente").value = "";
+      document.getElementById("qNotas").value = "";
+
+      quoteExtras = [];
+
+      fillSizeSelect("22 cm");
+      fillQuoteSelect("qPan", "Pan", "Vainilla");
+      fillQuoteSelect("qConsistencia", "Consistencia", "Tres leches");
+      fillQuoteSelect("qRelleno", "Relleno", "Nuez");
+      fillQuoteSelect("qBetun", "Betún", "Chantilly");
+      fillQuoteSelect("qDiseno", "Diseño", "Sencillo");
+
+      applySettingsToQuoteForm();
+      setBaseFromSize();
+      renderQuoteSummary();
+    }
+
+    /* ============================= */
+    /* PEDIDOS                       */
+    /* ============================= */
+
+    function addOrderFromQuote(q, render) {
+      db.orders.unshift({
+        id: uid(),
+        name: q.cliente || "Cliente",
+        cost: q.precioFinal,
+        date: new Date().toISOString().slice(0, 10),
+        time: new Date().toTimeString().slice(0, 5),
+        product: q.size + " " + q.pan + " / " + q.relleno + " / " + q.betun,
+        pan: q.pan,
+        betun: q.betun,
+        status: "Pendiente",
+        notes: q.notas || ""
+      });
+
+      if (render !== false) {
+        saveDB();
+        renderOrders();
+      }
+    }
+
+    function quoteToOrder(id) {
+      const q = db.quotes.find(function (item) {
+        return item.id === id;
+      });
+
+      if (!q) return;
+
+      addOrderFromQuote(q, true);
+      alert("Pedido creado desde la cotización.");
+    }
+
+    function addOrder() {
+      const name = val("orderName").trim();
+      const product = val("orderProduct").trim();
+      const cost = numVal("orderCost");
+
+      if (!name || !product) {
+        alert("Escribe nombre y producto.");
+        return;
+      }
+
+      db.orders.unshift({
+        id: uid(),
+        name: name,
+        product: product,
+        cost: cost,
+        date: val("orderDate"),
+        time: val("orderTime"),
+        pan: val("orderPan").trim(),
+        betun: val("orderBetun").trim(),
+        status: val("orderStatus"),
+        notes: val("orderNotes").trim()
+      });
+
+      saveDB();
+      renderOrders();
+      clearOrderForm();
+    }
+
+    function clearOrderForm() {
+      document.getElementById("orderName").value = "";
+      document.getElementById("orderProduct").value = "";
+      document.getElementById("orderCost").value = "";
+      document.getElementById("orderPan").value = "";
+      document.getElementById("orderBetun").value = "";
+      document.getElementById("orderNotes").value = "";
+      document.getElementById("orderStatus").value = "Pendiente";
+      document.getElementById("orderDate").value = new Date().toISOString().slice(0, 10);
+      document.getElementById("orderTime").value = "";
+    }
+
+    function statusOptions(status) {
+      return ["Pendiente", "Producción", "Entregado"]
+        .map(function (s) {
+          return `<option value="${s}" ${status === s ? "selected" : ""}>${s}</option>`;
+        })
+        .join("");
+    }
+
+    function renderOrders() {
+      const list = document.getElementById("ordersList");
+      const summary = document.getElementById("ordersSummary");
+
+      const total = db.orders.reduce(function (sum, o) {
+        return sum + Number(o.cost || 0);
+      }, 0);
+
+      const pendiente = db.orders
+        .filter(function (o) {
+          return o.status !== "Entregado";
+        })
+        .reduce(function (sum, o) {
+          return sum + Number(o.cost || 0);
+        }, 0);
+
+      summary.innerHTML = `
+        <div class="summary-row">
+          <span>Total pedidos</span>
+          <span>${fmt(total)}</span>
+        </div>
+        <div class="summary-row">
+          <span>Pendiente / producción</span>
+          <span>${fmt(pendiente)}</span>
+        </div>
+      `;
+
+      if (!db.orders.length) {
+        list.innerHTML = '<div class="muted">No hay pedidos.</div>';
+        return;
+      }
+
+      list.innerHTML = db.orders
+        .map(function (o) {
+          return `
+            <div class="order-item">
+              <div class="item-top">
+                <span>${esc(o.name)}</span>
+                <span>${fmt(o.cost)}</span>
+              </div>
+
+              <div class="muted">
+                ${esc(o.date || "")} ${o.time ? "· " + esc(o.time) : ""} · ${esc(o.product)}
+              </div>
+
+              <div class="muted">
+                ${o.pan ? "Pan: " + esc(o.pan) + " · " : ""}${o.betun ? "Betún: " + esc(o.betun) : ""}
+              </div>
+
+              ${o.notes ? `<div class="muted">${esc(o.notes)}</div>` : ""}
+
+              <div class="actions">
+                <select onchange="updateOrderStatus(${o.id}, this.value)">
+                  ${statusOptions(o.status)}
+                </select>
+
+                <button class="small-btn danger-small" onclick="deleteOrder(${o.id})">Eliminar</button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function updateOrderStatus(id, status) {
+      const o = db.orders.find(function (item) {
+        return item.id === id;
+      });
+
+      if (!o) return;
+
+      o.status = status;
+      saveDB();
+      renderOrders();
+    }
+
+    function deleteOrder(id) {
+      if (!confirm("¿Eliminar este pedido?")) return;
+
+      db.orders = db.orders.filter(function (o) {
+        return o.id !== id;
+      });
+
+      saveDB();
+      renderOrders();
+    }
+
+    /* ============================= */
+    /* RECETAS                       */
+    /* ============================= */
+
+    function renderRecipeInsumoSelect() {
+      const el = document.getElementById("recipeInsumo");
+
+      el.innerHTML = db.insumos
+        .map(function (ins, i) {
+          return `<option value="${i}">${esc(ins.n)} (${fmt(ins.c)}/${esc(ins.u || "u")})</option>`;
+        })
+        .join("");
+    }
+
+    function addRecipeIngredient() {
+      const idx = Number(val("recipeInsumo")) || 0;
+      const ins = db.insumos[idx];
+
+      if (!ins) {
+        alert("Selecciona un insumo.");
+        return;
+      }
+
+      const qty = numVal("recipeQty");
+
+      if (!qty || qty <= 0) {
+        alert("Escribe la cantidad.");
+        return;
+      }
+
+      const unit = val("recipeUnit").trim() || ins.u || "";
+      const cost = numVal("recipeUnitCost") || Number(ins.c || 0);
+      const total = qty * cost;
+
+      recipeIngredients.push({
+        i: ins.n,
+        qty: qty,
+        u: unit,
+        cost: cost,
+        total: total
+      });
+
+      document.getElementById("recipeQty").value = "";
+      document.getElementById("recipeUnit").value = "";
+      document.getElementById("recipeUnitCost").value = "";
+
+      renderRecipeIngredients();
+    }
+
+    function removeRecipeIngredient(index) {
+      recipeIngredients.splice(index, 1);
+      renderRecipeIngredients();
+    }
+
+    function renderRecipeIngredients() {
+      const el = document.getElementById("recipeIngredientsList");
+
+      if (!recipeIngredients.length) {
+        el.innerHTML = '<div class="muted">Sin ingredientes agregados.</div>';
+        return;
+      }
+
+      const total = recipeIngredients.reduce(function (sum, item) {
+        return sum + Number(item.total || 0);
+      }, 0);
+
+      el.innerHTML =
+        recipeIngredients
+          .map(function (item, idx) {
+            return `
+              <div class="summary-row">
+                <span>${esc(item.i)} · ${item.qty} ${esc(item.u)}</span>
+                <span>
+                  ${fmt(item.total)}
+                  <button class="small-btn danger-small" onclick="removeRecipeIngredient(${idx})">x</button>
+                </span>
+              </div>
+            `;
+          })
+          .join("") +
+        `
+          <div class="summary-row total">
+            <span>Total ingredientes</span>
+            <span>${fmt(total)}</span>
+          </div>
+        `;
+    }
+
+    function saveRecipe() {
+      const name = val("recipeName").trim();
+
+      if (!name) {
+        alert("Escribe el nombre de la receta.");
+        return;
+      }
+
+      if (!recipeIngredients.length) {
+        alert("Agrega al menos un ingrediente.");
+        return;
+      }
+
+      const total = recipeIngredients.reduce(function (sum, item) {
+        return sum + Number(item.total || 0);
+      }, 0);
+
+      db.recipes.unshift({
+        id: uid(),
+        name: name,
+        yield: val("recipeYield").trim(),
+        notes: val("recipeNotes").trim(),
+        ingredients: recipeIngredients.slice(),
+        total: total,
+        unit: null
+      });
+
+      saveDB();
+
+      recipeIngredients = [];
+
+      document.getElementById("recipeName").value = "";
+      document.getElementById("recipeYield").value = "";
+      document.getElementById("recipeNotes").value = "";
+
+      renderRecipeIngredients();
+      renderRecipes();
+
+      alert("Receta guardada.");
+    }
+
+    function renderRecipes() {
+      const el = document.getElementById("recipesList");
+
+      if (!db.recipes.length) {
+        el.innerHTML = '<div class="muted">No hay recetas.</div>';
+        return;
+      }
+
+      el.innerHTML = db.recipes
+        .map(function (r) {
+          const ingredientsHtml = (r.ingredients || [])
+            .map(function (ing) {
+              return `
+                <div class="summary-row">
+                  <span>${esc(ing.i)} · ${ing.qty} ${esc(ing.u || "")}</span>
+                  <span>${fmt(ing.total)}</span>
+                </div>
+              `;
+            })
+            .join("");
+
+          return `
+            <details class="recipe-card">
+              <summary>
+                ${esc(r.name)} · ${fmt(r.total)}
+              </summary>
+
+              <div class="muted" style="margin-top:8px;">
+                ${r.yield ? "Rendimiento: " + esc(r.yield) + "<br>" : ""}
+                ${r.notes ? "Notas: " + esc(r.notes) + "<br>" : ""}
+              </div>
+
+              ${ingredientsHtml || '<div class="muted">Receta base importada del Excel.</div>'}
+
+              <div class="actions">
+                <button class="small-btn danger-small" onclick="deleteRecipe(${r.id})">Eliminar</button>
+              </div>
+            </details>
+          `;
+        })
+        .join("");
+    }
+
+    function deleteRecipe(id) {
+      if (!confirm("¿Eliminar esta receta?")) return;
+
+      db.recipes = db.recipes.filter(function (r) {
+        return r.id !== id;
+      });
+
+      saveDB();
+      renderRecipes();
+    }
+
+    /* ============================= */
+    /* INSUMOS                       */
+    /* ============================= */
+
+    function addInsumo() {
+      const name = val("insumoName").trim();
+
+      if (!name) {
+        alert("Escribe el nombre del insumo.");
+        return;
+      }
+
+      const presentationRaw = val("insumoPresentation").trim();
+      const presentationNum = parseFloat(presentationRaw);
+
+      const price = numVal("insumoPrice");
+      let cost = numVal("insumoUnitCost");
+
+      if (!cost) {
+        cost = presentationNum > 0 ? price / presentationNum : price;
+      }
+
+      db.insumos.push({
+        n: name,
+        p: presentationRaw || 1,
+        u: val("insumoUm").trim() || "u",
+        pr: price,
+        c: cost
+      });
+
+      saveDB();
+
+      document.getElementById("insumoName").value = "";
+      document.getElementById("insumoPresentation").value = "";
+      document.getElementById("insumoUm").value = "";
+      document.getElementById("insumoPrice").value = "";
+      document.getElementById("insumoUnitCost").value = "";
+
+      renderInsumos();
+      renderRecipeInsumoSelect();
+    }
+
+    function renderInsumos() {
+      const search = val("insumoSearch").toLowerCase();
+      const el = document.getElementById("insumosList");
+
+      const items = db.insumos
+        .map(function (ins, index) {
+          return { ins: ins, index: index };
+        })
+        .filter(function (item) {
+          return item.ins.n.toLowerCase().includes(search);
+        });
+
+      if (!items.length) {
+        el.innerHTML = '<div class="muted">No se encontraron insumos.</div>';
+        return;
+      }
+
+      el.innerHTML = items
+        .map(function (item) {
+          const ins = item.ins;
+
+          return `
+            <div class="list-row">
+              <span>
+                <b>${esc(ins.n)}</b><br>
+                <span class="muted">${esc(ins.p)} ${esc(ins.u)} · Precio ${fmt(ins.pr)}</span>
+              </span>
+
+              <span>
+                ${fmt(ins.c)}/${esc(ins.u || "u")}
+                <button class="small-btn danger-small" onclick="deleteInsumo(${item.index})">x</button>
+              </span>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function deleteInsumo(index) {
+      if (!confirm("¿Eliminar este insumo?")) return;
+
+      db.insumos.splice(index, 1);
+
+      saveDB();
+      renderInsumos();
+      renderRecipeInsumoSelect();
+    }
+
+    /* ============================= */
+    /* TAMAÑOS Y EXTRAS              */
+    /* ============================= */
+
+    function addSize() {
+      const label = val("sizeLabel").trim();
+      const base = numVal("sizeBase");
+
+      if (!label) {
+        alert("Escribe el tamaño.");
+        return;
+      }
+
+      db.sizes.push({ label: label, base: base });
+
+      saveDB();
+
+      document.getElementById("sizeLabel").value = "";
+      document.getElementById("sizeBase").value = "";
+
+      renderSizes();
+      renderCotizadorSelects();
+    }
+
+    function renderSizes() {
+      const el = document.getElementById("sizesList");
+
+      if (!db.sizes.length) {
+        el.innerHTML = '<div class="muted">No hay tamaños.</div>';
+        return;
+      }
+
+      el.innerHTML = db.sizes
+        .map(function (s, index) {
+          return `
+            <div class="list-row">
+              <span>${esc(s.label)}</span>
+              <span>
+                ${fmt(s.base)}
+                <button class="small-btn danger-small" onclick="deleteSize(${index})">x</button>
+              </span>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function deleteSize(index) {
+      if (db.sizes.length <= 1) {
+        alert("Debe existir al menos un tamaño.");
+        return;
+      }
+
+      if (!confirm("¿Eliminar este tamaño?")) return;
+
+      db.sizes.splice(index, 1);
+
+      saveDB();
+      renderSizes();
+      renderCotizadorSelects();
+    }
+
+    function addExtra() {
+      const cat = val("extraCat");
+      const option = val("extraOption").trim();
+      const cost = numVal("extraCost");
+
+      if (!option) {
+        alert("Escribe la opción de extra.");
+        return;
+      }
+
+      db.extras.push({
+        cat: cat,
+        option: option,
+        cost: cost
+      });
+
+      saveDB();
+
+      document.getElementById("extraOption").value = "";
+      document.getElementById("extraCost").value = "";
+
+      renderExtras();
+      renderCotizadorSelects();
+    }
+
+    function renderExtras() {
+      const el = document.getElementById("extrasList");
+
+      if (!db.extras.length) {
+        el.innerHTML = '<div class="muted">No hay extras.</div>';
+        return;
+      }
+
+      el.innerHTML = db.extras
+        .map(function (e, index) {
+          return `
+            <div class="list-row">
+              <span>
+                <b>${esc(e.cat)}</b><br>
+                ${esc(e.option)}
+              </span>
+
+              <span>
+                ${fmt(e.cost)}
+                <button class="small-btn danger-small" onclick="deleteExtra(${index})">x</button>
+              </span>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function deleteExtra(index) {
+      if (!confirm("¿Eliminar este extra?")) return;
+
+      db.extras.splice(index, 1);
+
+      saveDB();
+      renderExtras();
+      renderCotizadorSelects();
+    }
+
+    /* ============================= */
+    /* VENTAS                        */
+    /* ============================= */
+
+    function addSale() {
+      const concept = val("saleConcept").trim();
+      const amount = numVal("saleAmount");
+      const month = val("saleMonth").trim() || "GENERAL";
+
+      if (!concept) {
+        alert("Escribe el concepto de la venta.");
+        return;
+      }
+
+      db.sales.unshift({
+        id: uid(),
+        month: month,
+        concept: concept,
+        amount: amount
+      });
+
+      saveDB();
+
+      document.getElementById("saleConcept").value = "";
+      document.getElementById("saleAmount").value = "";
+
+      renderSales();
+    }
+
+    function renderSales() {
+      const list = document.getElementById("salesList");
+      const summary = document.getElementById("salesSummary");
+
+      const total = db.sales.reduce(function (sum, s) {
+        return sum + Number(s.amount || 0);
+      }, 0);
+
+      summary.innerHTML = `
+        <div class="summary-row total">
+          <span>Total ventas</span>
+          <span>${fmt(total)}</span>
+        </div>
+      `;
+
+      if (!db.sales.length) {
+        list.innerHTML = '<div class="muted">No hay ventas registradas.</div>';
+        return;
+      }
+
+      list.innerHTML = db.sales
+        .map(function (s) {
+          return `
+            <div class="sale-item">
+              <div class="item-top">
+                <span>${esc(s.concept)}</span>
+                <span>${fmt(s.amount)}</span>
+              </div>
+
+              <div class="muted">${esc(s.month)}</div>
+
+              <div class="actions">
+                <button class="small-btn danger-small" onclick="deleteSale(${s.id})">Eliminar</button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function deleteSale(id) {
+      if (!confirm("¿Eliminar esta venta?")) return;
+
+      db.sales = db.sales.filter(function (s) {
+        return s.id !== id;
+      });
+
+      saveDB();
+      renderSales();
+    }
+
+    /* ============================= */
+    /* RESPALDO                      */
+    /* ============================= */
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(db, null, 2)], {
+        type: "application/json"
+      });
+
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "mcm_pasteleria_respaldo.json";
+      a.click();
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          const base = seedCopy();
+
+          db = {
+            ...base,
+            ...parsed,
+            settings: {
+              ...base.settings,
+              ...(parsed.settings || {})
+            }
+          };
+
+          saveDB();
+          renderAll();
+          applySettingsToQuoteForm();
+
+          alert("Datos importados correctamente.");
+        } catch (err) {
+          alert("Archivo inválido.");
+        }
+      };
+
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function resetData() {
+      if (!confirm("Esto borrará los datos guardados en este navegador y regresará a los datos iniciales. ¿Continuar?")) {
+        return;
+      }
+
+      localStorage.removeItem(DB_KEY);
+      location.reload();
+    }
+
+    /* ============================= */
+    /* RENDER GENERAL E INIT         */
+    /* ============================= */
+
+    function renderAll() {
+      renderSettings();
+      renderSizes();
+      renderExtras();
+      renderCotizadorSelects();
+      renderQuotes();
+      renderOrders();
+      renderRecipes();
+      renderInsumos();
+      renderSales();
+      renderRecipeInsumoSelect();
+      renderRecipeIngredients();
+      renderQuoteSummary();
+    }
+
+    function init() {
+      db = loadDB();
+
+      applySettingsToQuoteForm();
+      renderAll();
+
+      const orderDate = document.getElementById("orderDate");
+      if (orderDate && !orderDate.value) {
+        orderDate.value = new Date().toISOString().slice(0, 10);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
