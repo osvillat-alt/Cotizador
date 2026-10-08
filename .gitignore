@@ -1,0 +1,10 @@
+# Private backups and credentials never belong in this public repository.
+*.json
+*.xlsx
+*.xls
+*.zip
+.env
+.env.*
+*.pem
+*.key
+backups/
