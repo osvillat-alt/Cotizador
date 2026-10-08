@@ -1,0 +1,4630 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#7c3aed" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <!-- ponytail: inline handlers remain; escaping and backup validation protect their inputs. A future external API requires a server and a reviewed CSP. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'" />
+  <title>MCM Pastelería</title>
+
+  <style>
+    :root {
+      --bg: #f7f2ea;
+      --card: #ffffff;
+      --text: #1f1f1f;
+      --muted: #6b6b6b;
+      --line: #e7ddd1;
+      --primary: #7c3aed;
+      --primary-soft: #efe7ff;
+      --danger: #dc2626;
+      --danger-soft: #ffe1e1;
+      --success: #16a34a;
+      --success-soft: #dcfce7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding-bottom: 92px;
+    }
+
+    .topbar {
+      padding: 18px 16px 8px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .topbar p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 12px 16px 20px;
+    }
+
+    .tab {
+      display: none;
+    }
+
+    .tab.active {
+      display: block;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 20px rgba(31, 31, 31, 0.05);
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    h3 {
+      margin: 14px 0 8px;
+      font-size: 15px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--muted);
+      margin: 12px 0 6px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 16px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 74px;
+      resize: vertical;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1.2fr 0.7fr 0.7fr;
+      gap: 8px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 92px 46px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .summary-row,
+    .list-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px dashed var(--line);
+      font-size: 15px;
+    }
+
+    .summary-row:last-child,
+    .list-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-row.total {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .btn.primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn.secondary {
+      background: var(--primary-soft);
+      color: #4c1d95;
+    }
+
+    .btn.danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .btn-row .btn {
+      margin-top: 0;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      background: rgba(255, 255, 255, 0.98);
+      border-top: 1px solid var(--line);
+      padding: 7px 6px calc(8px + env(safe-area-inset-bottom));
+      z-index: 60;
+    }
+
+    .nav-btn {
+      flex: 1;
+      border: none;
+      background: none;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 7px 4px;
+    }
+
+    .nav-btn.active {
+      color: var(--primary);
+    }
+
+    .icon {
+      display: block;
+      font-size: 21px;
+      margin-bottom: 3px;
+    }
+
+    .small-btn {
+      border: none;
+      background: var(--primary-soft);
+      color: #4c1d95;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .danger-small {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .quote-item,
+    .order-item,
+    .recipe-card,
+    .sale-item {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .quote-item:last-child,
+    .order-item:last-child,
+    .recipe-card:last-child,
+    .sale-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 800;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 9px;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-right: 6px;
+      margin-top: 6px;
+      background: #f3f4f6;
+    }
+
+    .ok {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .warn {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .notice {
+      background: #f8f5ff;
+      border: 1px solid #ddd6fe;
+      color: #4c1d95;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.4;
+      margin-top: 10px;
+    }
+
+    details {
+      border-top: 1px dashed var(--line);
+      padding-top: 8px;
+      margin-top: 8px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    @media (max-width: 420px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <h1>MCM Pastelería</h1>
+    <p>Cotizador, pedidos, recetas e insumos desde el celular</p>
+  </header>
+
+  <main class="container">
+
+    <!-- ========================= -->
+    <!-- TAB COTIZAR               -->
+    <!-- ========================= -->
+    <section id="tab-cotizar" class="tab active">
+      <div class="card">
+        <h2>Cliente</h2>
+
+        <label for="qCliente">Nombre</label>
+        <input id="qCliente" placeholder="Nombre del cliente" />
+
+        <label for="qNotas">Notas</label>
+        <textarea id="qNotas" placeholder="Decoración, entrega, anticipo, sabor..."></textarea>
+      </div>
+
+      <div class="card">
+        <h2>Pastel</h2>
+
+        <label for="qSize">Tamaño</label>
+        <select id="qSize" onchange="onSizeChange()"></select>
+
+        <label for="qBase">Otros costos de producción ($)</label>
+        <input id="qBase" value="0" type="number" inputmode="decimal" step="0.01" min="0" oninput="renderQuoteSummary()" />
+
+        <div class="grid">
+          <div>
+            <label for="qPan">Pan</label>
+            <select id="qPan" onchange="applyQuotePreset();renderQuoteSummary()"></select>
+          </div>
+
+          <div>
+            <label for="qConsistencia">Consistencia</label>
+            <select id="qConsistencia" onchange="applyQuotePreset();renderQuoteSummary()"></select>
+          </div>
+
+          <div>
+            <label for="qRelleno">Relleno</label>
+            <select id="qRelleno" onchange="applyQuotePreset();renderQuoteSummary()"></select>
+          </div>
+
+          <div>
+            <label for="qBetun">Betún</label>
+            <select id="qBetun" onchange="applyQuotePreset();renderQuoteSummary()"></select>
+          </div>
+        </div>
+
+        <label for="qDiseno">Diseño</label>
+        <select id="qDiseno" onchange="applyQuotePreset();renderQuoteSummary()"></select>
+        <label for="qFigura">Figura</label>
+        <select id="qFigura" onchange="applyQuotePreset();renderQuoteSummary()"><option>Redondo</option><option>Corazón</option><option>Cuadrado</option><option>Otro</option></select>
+        <label for="qFiguraOtra">Detalle de figura (si eliges otro)</label>
+        <input id="qFiguraOtra" onchange="applyQuotePreset();renderQuoteSummary()" />
+        <label style="display:flex;gap:8px;align-items:center"><input id="qDouble" type="checkbox" style="width:auto" onchange="renderQuoteSummary()" /> Doble (del tamaño elegido)</label>
+        <div class="notice">Indica las cantidades para el tamaño normal. Doble multiplica ×2 el pan, relleno, betún y tres leches. Los empaques y el diseño se cotizan por separado.</div>
+      </div>
+      <div class="card">
+        <h2>Cantidades y costos del pastel</h2>
+        <p class="muted">Las opciones corresponden a los sabores elegidos arriba. Captura las cantidades para el tamaño normal; al elegir doble se multiplican por dos.</p>
+        <div id="quoteComponents"></div>
+        <button class="btn secondary" onclick="saveQuotePreset()">Guardar cantidades para esta combinación</button>
+        <p id="presetStatus" class="muted" role="status"></p>
+      </div>
+
+      <div class="card">
+        <h2>Costos y utilidad</h2>
+
+        <div class="grid">
+          <div>
+            <label for="qMerma">Merma %</label>
+        <input id="qMerma" min="0" type="number" inputmode="decimal" step="0.1" oninput="renderQuoteSummary()" />
+          </div>
+
+          <div>
+            <label for="qMargen">Utilidad sobre precio % (0–99)</label>
+        <input id="qMargen" min="0" max="99" type="number" inputmode="decimal" step="1" oninput="renderQuoteSummary()" />
+          </div>
+        </div>
+
+        <label style="display:flex; align-items:center; gap:8px; margin-top:12px;">
+          <input id="qRound" type="checkbox" style="width:auto" onchange="renderQuoteSummary()" />
+          Redondear precio final a decena
+        </label>
+
+        <div class="notice">
+          Fórmula usada: <b>Precio = Costo con merma / (1 - utilidad)</b>.<br />
+          Si quieres precio = costo × 2, usa <b>50%</b> de utilidad.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Extras personalizados</h2>
+
+        <label for="quoteSupply">Insumo adicional (caja, base, decoración…)</label>
+        <select id="quoteSupply"></select>
+        <label for="quoteSupplyQty">Cantidad en la unidad del insumo</label>
+        <input id="quoteSupplyQty" type="number" min="0" step="any" />
+        <button class="btn secondary" onclick="addSupplyExtra()">Agregar insumo a la cotización</button>
+
+        <div class="row">
+          <input id="quoteExtraName" placeholder="Ej. Molde, frase, topper" />
+          <input id="quoteExtraCost" type="number" inputmode="decimal" step="0.01" placeholder="$" />
+          <button class="small-btn" onclick="addQuoteExtra()">+</button>
+        </div>
+
+        <div id="quoteExtrasList"></div>
+      </div>
+
+      <div class="card">
+        <h2>Resumen</h2>
+        <div id="quoteSummary"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn primary" onclick="saveQuote(false)">Guardar cotización</button>
+        <button class="btn secondary" onclick="saveQuote(true)">Guardar + pedido</button>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn secondary" onclick="shareCurrentQuote()">WhatsApp</button>
+        <button class="btn danger" onclick="clearQuote()">Limpiar</button>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h2>Cotizaciones guardadas</h2>
+        <div id="quotesList"></div>
+      </div>
+    </section>
+
+    <!-- ========================= -->
+    <!-- TAB PEDIDOS               -->
+    <!-- ========================= -->
+    <section id="tab-pedidos" class="tab">
+      <div class="card">
+        <h2>Nuevo pedido</h2>
+
+        <label for="orderName">Nombre</label>
+        <input id="orderName" placeholder="Cliente" />
+
+        <label for="orderProduct">Producto</label>
+        <input id="orderProduct" placeholder="Pastel 22 cm, pay, maceta..." />
+
+        <div class="grid">
+          <div>
+            <label for="orderCost">Costo / Precio</label>
+        <input id="orderCost" type="number" inputmode="decimal" step="0.01" placeholder="0.00" />
+          </div>
+
+          <div>
+            <label for="orderStatus">Estado</label>
+        <select id="orderStatus">
+              <option>Pendiente</option>
+              <option>Producción</option>
+              <option>Entregado</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="orderDate">Fecha</label>
+        <input id="orderDate" type="date" />
+          </div>
+
+          <div>
+            <label for="orderTime">Hora</label>
+        <input id="orderTime" type="time" />
+          </div>
+
+          <div>
+            <label for="orderPan">Pan</label>
+        <input id="orderPan" placeholder="Vainilla, chocolate..." />
+          </div>
+
+          <div>
+            <label for="orderBetun">Betún</label>
+        <input id="orderBetun" placeholder="Chantilly, queso crema..." />
+          </div>
+        </div>
+
+        <label for="orderNotes">Notas</label>
+        <textarea id="orderNotes" placeholder="Detalles del pedido..."></textarea>
+
+        <button class="btn primary" onclick="addOrder()">Agregar pedido</button>
+      </div>
+
+      <div class="card">
+        <h2>Pedidos</h2>
+        <div id="ordersSummary"></div>
+        <div id="ordersList"></div>
+      </div>
+    </section>
+
+    <!-- ========================= -->
+    <!-- TAB RECETAS               -->
+    <!-- ========================= -->
+    <section id="tab-recetas" class="tab">
+      <div class="card">
+        <h2>Nueva receta / costo</h2>
+
+        <label for="recipeName">Nombre de receta</label>
+        <input id="recipeName" placeholder="Betún de queso crema, bizcocho..." />
+
+        <div class="grid">
+          <div>
+            <label for="recipeYield">Rendimiento</label>
+        <input id="recipeYield" placeholder="1 molde 22 cm, 10 piezas..." />
+          </div>
+
+          <div>
+            <label for="recipeNotes">Notas</label>
+        <input id="recipeNotes" placeholder="Opcional" />
+          </div>
+        </div>
+
+        <h3>Agregar ingrediente</h3>
+
+        <label for="recipeInsumo">Insumo</label>
+        <select id="recipeInsumo"></select>
+
+        <div class="grid-3">
+          <div>
+            <label for="recipeQty">Cantidad</label>
+        <input id="recipeQty" type="number" inputmode="decimal" step="0.01" placeholder="0" />
+          </div>
+
+          <div>
+            <label for="recipeUnit">Unidad</label>
+        <input id="recipeUnit" placeholder="gr / ml / ea" />
+          </div>
+
+          <div>
+            <label for="recipeUnitCost">Costo unitario</label>
+        <input id="recipeUnitCost" placeholder="Se calcula desde Insumos" disabled />
+          </div>
+        </div>
+
+        <button class="btn secondary" onclick="addRecipeIngredient()">Agregar ingrediente</button>
+
+        <div id="recipeIngredientsList" style="margin-top:12px;"></div>
+
+        <button class="btn primary" onclick="saveRecipe()">Guardar receta</button>
+      </div>
+
+      <div class="card">
+        <h2>Recetario</h2>
+        <div id="recipesList" style="margin-top:10px;"></div>
+      </div>
+    </section>
+
+    <!-- ========================= -->
+    <!-- TAB INSUMOS               -->
+    <!-- ========================= -->
+    <section id="tab-insumos" class="tab">
+      <div class="card">
+        <h2>Nuevo insumo</h2>
+
+        <label for="insumoName">Nombre</label>
+        <input id="insumoName" placeholder="Queso crema, azúcar, caja..." />
+
+        <div class="grid">
+          <div>
+            <label for="insumoPresentation">Presentación</label>
+        <input id="insumoPresentation" placeholder="200, 1000, 1..." />
+          </div>
+
+          <div>
+            <label for="insumoUm">Unidad</label>
+        <input id="insumoUm" placeholder="gr / ml / ea" />
+          </div>
+
+          <div>
+            <label for="insumoPrice">Precio</label>
+        <input id="insumoPrice" type="number" inputmode="decimal" step="0.01" placeholder="0.00" />
+          </div>
+
+          <div>
+            <label for="insumoUnitCost">Costo unitario</label>
+        <input id="insumoUnitCost" placeholder="Precio ÷ presentación" disabled />
+          </div>
+        </div>
+
+        <button class="btn primary" onclick="addInsumo()">Guardar insumo</button>
+      </div>
+
+      <div class="card">
+        <h2>Precios de insumos</h2><p class="muted">Precio de la presentación completa, en pesos. Vacío significa pendiente; 0 es un costo gratuito confirmado. Guarda cada cambio para actualizar las recetas y cotizaciones nuevas.</p>
+
+        <label for="insumoSearch">Buscar</label>
+        <input id="insumoSearch" placeholder="Buscar insumo..." oninput="renderInsumos()" />
+
+        <div id="insumosList" style="margin-top:10px;"></div>
+      </div>
+    </section>
+
+    <!-- ========================= -->
+    <!-- TAB AJUSTES               -->
+    <!-- ========================= -->
+    <section id="tab-ajustes" class="tab">
+      <div class="card">
+        <h2>Ajustes de cálculo</h2>
+
+        <div class="grid">
+          <div>
+            <label for="setMerma">Merma por defecto %</label>
+        <input id="setMerma" type="number" inputmode="decimal" step="0.1" />
+          </div>
+
+          <div>
+            <label for="setMargen">Utilidad por defecto %</label>
+        <input id="setMargen" type="number" inputmode="decimal" step="1" />
+          </div>
+        </div>
+
+        <label style="display:flex; align-items:center; gap:8px; margin-top:12px;">
+          <input id="setRound" type="checkbox" style="width:auto" />
+          Redondear por defecto a decena
+        </label>
+
+        <button class="btn primary" onclick="saveSettings()">Guardar ajustes</button>
+      </div>
+
+      <div class="card">
+        <h2>Tamaños</h2>
+
+        <div class="grid">
+          <div>
+            <label for="sizeLabel">Tamaño</label>
+        <input id="sizeLabel" placeholder="25 cm" />
+          </div>
+
+          <div>
+            <label for="sizeBase">Otros costos por defecto ($)</label>
+        <input id="sizeBase" type="number" inputmode="decimal" step="0.01" placeholder="0.00" />
+          </div>
+        </div>
+
+        <button class="btn secondary" onclick="addSize()">Agregar tamaño</button>
+
+        <div id="sizesList" style="margin-top:10px;"></div>
+      </div>
+
+      <div class="card">
+        <h2>Extras del cotizador</h2>
+
+        <div class="grid">
+          <div>
+            <label for="extraCat">Categoría</label>
+        <select id="extraCat">
+              <option>Pan</option>
+              <option>Consistencia</option>
+              <option>Relleno</option>
+              <option>Betún</option>
+              <option>Diseño</option>
+              <option>Otro</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="extraOption">Opción</label>
+        <input id="extraOption" placeholder="Chocolate, nuez..." />
+          </div>
+
+          <div>
+            <label for="extraCost">Costo extra</label>
+        <input id="extraCost" type="number" inputmode="decimal" step="0.01" placeholder="0.00" />
+          </div>
+        </div>
+
+        <button class="btn secondary" onclick="addExtra()">Agregar extra</button>
+
+        <div id="extrasList" style="margin-top:10px;"></div>
+      </div>
+
+      <div class="card">
+        <h2>Ventas</h2>
+
+        <div class="grid">
+          <div>
+            <label for="saleConcept">Concepto</label>
+        <input id="saleConcept" placeholder="Pastel cliente..." />
+          </div>
+
+          <div>
+            <label for="saleAmount">Monto</label>
+        <input id="saleAmount" type="number" inputmode="decimal" step="0.01" placeholder="0.00" />
+          </div>
+
+          <div>
+            <label for="saleMonth">Mes</label>
+        <input id="saleMonth" placeholder="JUNIO" />
+          </div>
+        </div>
+
+        <button class="btn secondary" onclick="addSale()">Agregar venta</button>
+
+        <div id="salesSummary" style="margin-top:10px;"></div>
+        <div id="salesList"></div>
+      </div>
+
+      <div class="card">
+        <h2>Datos y respaldo</h2>
+
+        <button class="btn secondary" onclick="exportData()">Exportar respaldo JSON</button>
+
+        <label for="importFile">Importar respaldo</label>
+        <input id="importFile" type="file" accept=".json" onchange="importData(event)" />
+
+        <button class="btn danger" onclick="resetData()">Borrar todo y restablecer</button>
+
+        <div class="notice">
+          Los datos se guardan en el navegador/celular. Haz respaldos con “Exportar respaldo JSON” por si borras caché o cambias de equipo.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button id="nav-cotizar" class="nav-btn active" onclick="showTab('cotizar')">
+      <span class="icon"></span>
+      Cotizar
+    </button>
+
+    <button id="nav-pedidos" class="nav-btn" onclick="showTab('pedidos')">
+      <span class="icon"></span>
+      Pedidos
+    </button>
+
+    <button id="nav-recetas" class="nav-btn" onclick="showTab('recetas')">
+      <span class="icon"></span>
+      Recetas
+    </button>
+
+    <button id="nav-insumos" class="nav-btn" onclick="showTab('insumos')">
+      <span class="icon"></span>
+      Insumos
+    </button>
+
+    <button id="nav-ajustes" class="nav-btn" onclick="showTab('ajustes')">
+      <span class="icon"></span>
+      Ajustes
+    </button>
+  </nav>
+
+  <script>
+    const DB_KEY = "mcm_full_v1";
+
+    const SEED = {
+  "settings": {
+    "merma": 10,
+    "margen": 30,
+    "round": true
+  },
+  "schemaVersion": 2,
+  "quotePresets": {},
+  "sizes": [
+    {
+      "label": "12 cm",
+      "portions": "3–4",
+      "base": 0
+    },
+    {
+      "label": "16 cm",
+      "portions": "8–10",
+      "base": 0
+    },
+    {
+      "label": "18 cm",
+      "portions": "12–15",
+      "base": 0
+    },
+    {
+      "label": "20 cm",
+      "portions": "15–18",
+      "base": 0
+    },
+    {
+      "label": "22 cm",
+      "portions": "18–24",
+      "base": 0
+    }
+  ],
+  "extras": [],
+  "insumos": [
+    {
+      "id": "excel-A2",
+      "n": "3 leches",
+      "p": 1000,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A2"
+    },
+    {
+      "id": "excel-A3",
+      "n": "Aceite",
+      "p": 900,
+      "u": "ml",
+      "pr": null,
+      "source": "Insumos!A3"
+    },
+    {
+      "id": "excel-A4",
+      "n": "Azúcar glass",
+      "p": 500,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A4"
+    },
+    {
+      "id": "excel-A5",
+      "n": "Azúcar mascabado",
+      "p": 500,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A5"
+    },
+    {
+      "id": "excel-A6",
+      "n": "Azúcar morena",
+      "p": 900,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A6"
+    },
+    {
+      "id": "excel-A7",
+      "n": "Azúcar refinada",
+      "p": 1000,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A7"
+    },
+    {
+      "id": "excel-A8",
+      "n": "BASE 20 CM",
+      "p": 1,
+      "u": "EA",
+      "pr": null,
+      "source": "Insumos!A8"
+    },
+    {
+      "id": "excel-A9",
+      "n": "Base 25cm",
+      "p": 1,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A9"
+    },
+    {
+      "id": "excel-A10",
+      "n": "BASE 28 CM ",
+      "p": 1,
+      "u": "EA",
+      "pr": null,
+      "source": "Insumos!A10"
+    },
+    {
+      "id": "excel-A11",
+      "n": "Base pay",
+      "p": 1,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A11"
+    },
+    {
+      "id": "excel-A12",
+      "n": "Bisagra individual",
+      "p": 1,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A12"
+    },
+    {
+      "id": "excel-A13",
+      "n": "Bisagra pay",
+      "p": 1,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A13"
+    },
+    {
+      "id": "excel-A14",
+      "n": "CAJA 10X10X5",
+      "p": 1,
+      "u": "EA",
+      "pr": null,
+      "source": "Insumos!A14"
+    },
+    {
+      "id": "excel-A15",
+      "n": "Caja 12x12x6",
+      "p": 1,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A15"
+    },
+    {
+      "id": "excel-A16",
+      "n": "Caja blanca 8X8X5",
+      "p": 1,
+      "u": "EA",
+      "pr": null,
+      "source": "Insumos!A16"
+    },
+    {
+      "id": "excel-A17",
+      "n": "Caja con ventana 10x10x5",
+      "p": 1,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A17"
+    },
+    {
+      "id": "excel-A18",
+      "n": "Caja kraft 8x8x5",
+      "p": 1,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A18"
+    },
+    {
+      "id": "excel-A19",
+      "n": "Canela",
+      "p": 300,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A19"
+    },
+    {
+      "id": "excel-A20",
+      "n": "Chantillly",
+      "p": 1000,
+      "u": "ml",
+      "pr": null,
+      "source": "Insumos!A20"
+    },
+    {
+      "id": "excel-A21",
+      "n": "Chantillly",
+      "p": 450,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A21"
+    },
+    {
+      "id": "excel-A22",
+      "n": "Chantilly azul",
+      "p": 500,
+      "u": "ml",
+      "pr": null,
+      "source": "Insumos!A22"
+    },
+    {
+      "id": "excel-A23",
+      "n": "Chispas chocolate blanco",
+      "p": null,
+      "u": "",
+      "pr": null,
+      "source": "Insumos!A23"
+    },
+    {
+      "id": "excel-A24",
+      "n": "Chispas de chocolate",
+      "p": 250,
+      "u": "GR",
+      "pr": null,
+      "source": "Insumos!A24"
+    },
+    {
+      "id": "excel-A25",
+      "n": "COCOA HERSHEYS",
+      "p": 100,
+      "u": "GR",
+      "pr": null,
+      "source": "Insumos!A25"
+    },
+    {
+      "id": "excel-A26",
+      "n": "Crema acida lala",
+      "p": 426,
+      "u": "ml",
+      "pr": null,
+      "source": "Insumos!A26"
+    },
+    {
+      "id": "excel-A27",
+      "n": "DOMO 12 CM",
+      "p": 1,
+      "u": "EA",
+      "pr": null,
+      "source": "Insumos!A27"
+    },
+    {
+      "id": "excel-A28",
+      "n": "Domo 25 cm",
+      "p": 1,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A28"
+    },
+    {
+      "id": "excel-A29",
+      "n": "Dulce de Leche",
+      "p": 360,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A29"
+    },
+    {
+      "id": "excel-A30",
+      "n": "Escencia almendra",
+      "p": null,
+      "u": "",
+      "pr": null,
+      "source": "Insumos!A30"
+    },
+    {
+      "id": "excel-A31",
+      "n": "Escencia vainilla",
+      "p": 10000,
+      "u": "ml",
+      "pr": null,
+      "source": "Insumos!A31"
+    },
+    {
+      "id": "excel-A32",
+      "n": "Escencia vainilla",
+      "p": 150,
+      "u": "ml",
+      "pr": null,
+      "source": "Insumos!A32"
+    },
+    {
+      "id": "excel-A33",
+      "n": "Evaporada",
+      "p": 945,
+      "u": "ml",
+      "pr": null,
+      "source": "Insumos!A33"
+    },
+    {
+      "id": "excel-A34",
+      "n": "Frambuesa",
+      "p": 1,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A34"
+    },
+    {
+      "id": "excel-A35",
+      "n": "Galleta maria",
+      "p": 1,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A35"
+    },
+    {
+      "id": "excel-A36",
+      "n": "Galleta oreo",
+      "p": 1,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A36"
+    },
+    {
+      "id": "excel-A37",
+      "n": "Ganashe chocolate",
+      "p": 10000,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A37"
+    },
+    {
+      "id": "excel-A38",
+      "n": "Harina alta proteína",
+      "p": 10000,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A38"
+    },
+    {
+      "id": "excel-A39",
+      "n": "Harina extra esponja",
+      "p": 1000,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A39"
+    },
+    {
+      "id": "excel-A40",
+      "n": "Harina para galleta",
+      "p": 1,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A40"
+    },
+    {
+      "id": "excel-A41",
+      "n": "Harina preparada",
+      "p": 1000,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A41"
+    },
+    {
+      "id": "excel-A42",
+      "n": "Harina Redvelvet 375 gr",
+      "p": 1,
+      "u": "ea",
+      "pr": null,
+      "source": "Insumos!A42"
+    },
+    {
+      "id": "excel-A43",
+      "n": "Harina vainilla ultra",
+      "p": 1000,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A43"
+    },
+    {
+      "id": "excel-A44",
+      "n": "Harina Zanahoria",
+      "p": 500,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A44"
+    },
+    {
+      "id": "excel-A45",
+      "n": "Huevo",
+      "p": 30,
+      "u": "EA",
+      "pr": null,
+      "source": "Insumos!A45"
+    },
+    {
+      "id": "excel-A46",
+      "n": "Leche",
+      "p": 1000,
+      "u": "ml",
+      "pr": null,
+      "source": "Insumos!A46"
+    },
+    {
+      "id": "excel-A47",
+      "n": "Lechera",
+      "p": 375,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A47"
+    },
+    {
+      "id": "excel-A48",
+      "n": "Levadura",
+      "p": 5,
+      "u": "EA",
+      "pr": null,
+      "source": "Insumos!A48"
+    },
+    {
+      "id": "excel-A49",
+      "n": "Limón",
+      "p": 1000,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A49"
+    },
+    {
+      "id": "excel-A50",
+      "n": "Maizena",
+      "p": 160,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A50"
+    },
+    {
+      "id": "excel-A51",
+      "n": "Mantequilla chilchota",
+      "p": 1000,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A51"
+    },
+    {
+      "id": "excel-A52",
+      "n": "Mantequilla",
+      "p": 90,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A52"
+    },
+    {
+      "id": "excel-A53",
+      "n": "Mermelada",
+      "p": 350,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A53"
+    },
+    {
+      "id": "excel-A54",
+      "n": "Nuez",
+      "p": 250,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A54"
+    },
+    {
+      "id": "excel-A55",
+      "n": "Nuez",
+      "p": 100,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A55"
+    },
+    {
+      "id": "excel-A56",
+      "n": "Nutella",
+      "p": 1000,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A56"
+    },
+    {
+      "id": "excel-A57",
+      "n": "Queso crema",
+      "p": 200,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A57"
+    },
+    {
+      "id": "excel-A58",
+      "n": "Harina creamy cake provedora",
+      "p": 1000,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A58"
+    },
+    {
+      "id": "excel-A59",
+      "n": "Cocoa alpezzi",
+      "p": 250,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A59"
+    },
+    {
+      "id": "excel-A60",
+      "n": "bicarbonato",
+      "p": 100,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A60"
+    },
+    {
+      "id": "excel-A61",
+      "n": "rexal",
+      "p": 100,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A61"
+    },
+    {
+      "id": "excel-A62",
+      "n": "calabaza",
+      "p": 475,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A62"
+    },
+    {
+      "id": "excel-A63",
+      "n": "pumpink",
+      "p": 100,
+      "u": "gr",
+      "pr": null,
+      "source": "Insumos!A63"
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1000,
+      "name": "Betún de queso crema",
+      "source": "recetario!A2",
+      "yieldText": "",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Queso crema",
+          "qty": 200,
+          "qtyText": 200,
+          "u": "gr",
+          "insumoId": "excel-A57",
+          "factor": 1,
+          "source": "A3",
+          "originalCostFormula": "=Insumos!E57"
+        },
+        {
+          "i": "Azúcar glass",
+          "qty": 300,
+          "qtyText": 300,
+          "u": "gr",
+          "insumoId": "excel-A4",
+          "factor": 1,
+          "source": "A4",
+          "originalCostFormula": "=Insumos!E4"
+        },
+        {
+          "i": "Vainilla",
+          "qty": 10,
+          "qtyText": 10,
+          "u": "ml",
+          "insumoId": "excel-A31",
+          "factor": 1,
+          "source": "A5",
+          "originalCostFormula": "=Insumos!E31"
+        },
+        {
+          "i": "Mantequilla",
+          "qty": 150,
+          "qtyText": 150,
+          "u": "gr",
+          "insumoId": "excel-A51",
+          "factor": 1,
+          "source": "A6",
+          "originalCostFormula": "=Insumos!E51"
+        }
+      ]
+    },
+    {
+      "id": 1001,
+      "name": "Cheescake alto",
+      "source": "recetario!A10",
+      "yieldText": "Molde 22 cm, salen 8 rebanadas",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Queso crema",
+          "qty": 400,
+          "qtyText": 400,
+          "u": "gr",
+          "insumoId": "excel-A57",
+          "factor": 1,
+          "source": "A11",
+          "originalCostFormula": "=Insumos!E57"
+        },
+        {
+          "i": "Azúcar refinada",
+          "qty": 120,
+          "qtyText": 120,
+          "u": "gr",
+          "insumoId": "excel-A7",
+          "factor": 1,
+          "source": "A12",
+          "originalCostFormula": "=Insumos!E7"
+        },
+        {
+          "i": "Vainilla",
+          "qty": 10,
+          "qtyText": 10,
+          "u": "ml",
+          "insumoId": "excel-A31",
+          "factor": 1,
+          "source": "A13",
+          "originalCostFormula": "=Insumos!E31"
+        },
+        {
+          "i": "Crema ácida",
+          "qty": 60,
+          "qtyText": 60,
+          "u": "gr",
+          "insumoId": "excel-A26",
+          "factor": null,
+          "source": "A14",
+          "originalCostFormula": "=Insumos!E26"
+        },
+        {
+          "i": "Maizena",
+          "qty": 15,
+          "qtyText": 15,
+          "u": "gr",
+          "insumoId": "excel-A50",
+          "factor": 1,
+          "source": "A15",
+          "originalCostFormula": "=Insumos!E50"
+        },
+        {
+          "i": "Huevo",
+          "qty": 4,
+          "qtyText": 4,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "A16",
+          "originalCostFormula": "=Insumos!E45"
+        },
+        {
+          "i": "Limón",
+          "qty": 1,
+          "qtyText": 1,
+          "u": "ea",
+          "insumoId": "excel-A49",
+          "factor": null,
+          "source": "A17",
+          "originalCostFormula": "=Insumos!E27"
+        },
+        {
+          "i": "Galleta maria",
+          "qty": 1,
+          "qtyText": 1,
+          "u": "ea",
+          "insumoId": "excel-A35",
+          "factor": 1,
+          "source": "A18",
+          "originalCostFormula": "=Insumos!E35"
+        },
+        {
+          "i": "Mantequilla",
+          "qty": 90,
+          "qtyText": 90,
+          "u": "gr",
+          "insumoId": "excel-A51",
+          "factor": 1,
+          "source": "A19",
+          "originalCostFormula": "=D6"
+        }
+      ]
+    },
+    {
+      "id": 1002,
+      "name": "Pay convencional",
+      "source": "recetario!A24",
+      "yieldText": "salen 2 pay completo y sobra mezcla",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Queso crema",
+          "qty": 400,
+          "qtyText": 400,
+          "u": "gr",
+          "insumoId": "excel-A57",
+          "factor": 1,
+          "source": "A25",
+          "originalCostFormula": "=Insumos!E57"
+        },
+        {
+          "i": "Lechera",
+          "qty": 375,
+          "qtyText": 375,
+          "u": "gr",
+          "insumoId": "excel-A47",
+          "factor": 1,
+          "source": "A26",
+          "originalCostFormula": "=Insumos!E47"
+        },
+        {
+          "i": "Vainilla",
+          "qty": 10,
+          "qtyText": 10,
+          "u": "ml",
+          "insumoId": "excel-A31",
+          "factor": 1,
+          "source": "A27",
+          "originalCostFormula": "=Insumos!E31"
+        },
+        {
+          "i": "Evaporada",
+          "qty": 375,
+          "qtyText": 375,
+          "u": "gr",
+          "insumoId": "excel-A33",
+          "factor": null,
+          "source": "A28",
+          "originalCostFormula": "=Insumos!E33"
+        },
+        {
+          "i": "Huevo",
+          "qty": 3,
+          "qtyText": 3,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "A29",
+          "originalCostFormula": "=D16"
+        },
+        {
+          "i": "Limón",
+          "qty": 1,
+          "qtyText": 1,
+          "u": "ea",
+          "insumoId": "excel-A49",
+          "factor": null,
+          "source": "A30",
+          "originalCostFormula": "=Insumos!E49"
+        },
+        {
+          "i": "Base galleta",
+          "qty": 2,
+          "qtyText": 2,
+          "u": "ea",
+          "insumoId": "excel-A11",
+          "factor": 1,
+          "source": "A31",
+          "originalCostFormula": "=Insumos!E11"
+        }
+      ]
+    },
+    {
+      "id": 1003,
+      "name": "Pay convencional",
+      "source": "recetario!A36",
+      "yieldText": "salen 2 pay completo y sobra mezcla",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Queso crema",
+          "qty": 400,
+          "qtyText": 400,
+          "u": "gr",
+          "insumoId": "excel-A57",
+          "factor": 1,
+          "source": "A37",
+          "originalCostFormula": "=Insumos!E46"
+        },
+        {
+          "i": "Lechera",
+          "qty": 375,
+          "qtyText": 375,
+          "u": "gr",
+          "insumoId": "excel-A47",
+          "factor": 1,
+          "source": "A38",
+          "originalCostFormula": "=Insumos!E39"
+        },
+        {
+          "i": "Vainilla",
+          "qty": 10,
+          "qtyText": 10,
+          "u": "ml",
+          "insumoId": null,
+          "factor": null,
+          "source": "A39",
+          "originalCostFormula": "=Insumos!E36"
+        },
+        {
+          "i": "Evaporada",
+          "qty": 375,
+          "qtyText": 375,
+          "u": "gr",
+          "insumoId": "excel-A33",
+          "factor": null,
+          "source": "A40",
+          "originalCostFormula": "=Insumos!E27"
+        },
+        {
+          "i": "Huevo",
+          "qty": 3,
+          "qtyText": 3,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "A41",
+          "originalCostFormula": "=Insumos!E37"
+        },
+        {
+          "i": "Limón",
+          "qty": 1,
+          "qtyText": 1,
+          "u": "ea",
+          "insumoId": "excel-A49",
+          "factor": null,
+          "source": "A42",
+          "originalCostFormula": "=Insumos!E41"
+        },
+        {
+          "i": "Base galleta",
+          "qty": 2,
+          "qtyText": 2,
+          "u": "ea",
+          "insumoId": "excel-A11",
+          "factor": 1,
+          "source": "A43",
+          "originalCostFormula": "=Insumos!E19"
+        }
+      ]
+    },
+    {
+      "id": 1004,
+      "name": "CHEESCAKE",
+      "source": "recetario!A48",
+      "yieldText": "",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Queso crema",
+          "qty": 200,
+          "qtyText": 200,
+          "u": "gr",
+          "insumoId": "excel-A57",
+          "factor": 1,
+          "source": "A49",
+          "originalCostFormula": "=Insumos!E57"
+        },
+        {
+          "i": "Lechera",
+          "qty": 375,
+          "qtyText": 375,
+          "u": "gr",
+          "insumoId": "excel-A47",
+          "factor": 1,
+          "source": "A50",
+          "originalCostFormula": "=Insumos!E47"
+        },
+        {
+          "i": "Vainilla",
+          "qty": 10,
+          "qtyText": 10,
+          "u": "ml",
+          "insumoId": "excel-A31",
+          "factor": 1,
+          "source": "A51",
+          "originalCostFormula": "=Insumos!E31"
+        },
+        {
+          "i": "Evaporada",
+          "qty": 375,
+          "qtyText": 375,
+          "u": "gr",
+          "insumoId": "excel-A33",
+          "factor": null,
+          "source": "A52",
+          "originalCostFormula": "=Insumos!E33"
+        },
+        {
+          "i": "Limón",
+          "qty": 5,
+          "qtyText": 5,
+          "u": "ea",
+          "insumoId": "excel-A49",
+          "factor": null,
+          "source": "A53",
+          "originalCostFormula": 15
+        }
+      ]
+    },
+    {
+      "id": 1005,
+      "name": "Glaseado de queso crema",
+      "source": "recetario!G2",
+      "yieldText": "",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Queso crema",
+          "qty": 200,
+          "qtyText": 200,
+          "u": "gr",
+          "insumoId": "excel-A57",
+          "factor": 1,
+          "source": "G3",
+          "originalCostFormula": "=Insumos!E57"
+        },
+        {
+          "i": "Azúcar glass",
+          "qty": 20,
+          "qtyText": 20,
+          "u": "gr",
+          "insumoId": "excel-A4",
+          "factor": 1,
+          "source": "G4",
+          "originalCostFormula": "=Insumos!E4"
+        },
+        {
+          "i": "Vainilla",
+          "qty": 10,
+          "qtyText": 10,
+          "u": "ml",
+          "insumoId": "excel-A31",
+          "factor": 1,
+          "source": "G5",
+          "originalCostFormula": "=Insumos!E31"
+        }
+      ]
+    },
+    {
+      "id": 1006,
+      "name": "Roles de canela",
+      "source": "recetario!G10",
+      "yieldText": "salen 10 ea",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Harina alta proteína",
+          "qty": 500,
+          "qtyText": 500,
+          "u": "gr",
+          "insumoId": "excel-A38",
+          "factor": 1,
+          "source": "G11",
+          "originalCostFormula": "=Insumos!E38"
+        },
+        {
+          "i": "Levadura",
+          "qty": 11,
+          "qtyText": 11,
+          "u": "gr",
+          "insumoId": "excel-A48",
+          "factor": null,
+          "source": "G12",
+          "originalCostFormula": "=Insumos!E48"
+        },
+        {
+          "i": "Azúcar refinada",
+          "qty": 100,
+          "qtyText": 100,
+          "u": "gr",
+          "insumoId": "excel-A7",
+          "factor": 1,
+          "source": "G13",
+          "originalCostFormula": "=Insumos!E7"
+        },
+        {
+          "i": "Huevo",
+          "qty": 2,
+          "qtyText": 2,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "G14",
+          "originalCostFormula": "=Insumos!E45"
+        },
+        {
+          "i": "Leche",
+          "qty": 250,
+          "qtyText": 250,
+          "u": "ml",
+          "insumoId": "excel-A46",
+          "factor": 1,
+          "source": "G15",
+          "originalCostFormula": "=Insumos!E46"
+        },
+        {
+          "i": "Mantequilla",
+          "qty": 90,
+          "qtyText": 90,
+          "u": "gr",
+          "insumoId": "excel-A52",
+          "factor": 1,
+          "source": "G16",
+          "originalCostFormula": "=Insumos!E52"
+        },
+        {
+          "i": "Vainilla",
+          "qty": 10,
+          "qtyText": 10,
+          "u": "ml",
+          "insumoId": "excel-A31",
+          "factor": 1,
+          "source": "G17",
+          "originalCostFormula": "=Insumos!E31"
+        }
+      ]
+    },
+    {
+      "id": 1007,
+      "name": "Betún mantequilla",
+      "source": "recetario!G24",
+      "yieldText": "",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Mantequilla",
+          "qty": 250,
+          "qtyText": 250,
+          "u": "gr",
+          "insumoId": "excel-A52",
+          "factor": 1,
+          "source": "G25",
+          "originalCostFormula": "=Insumos!E52"
+        },
+        {
+          "i": "Azúcar glass",
+          "qty": 360,
+          "qtyText": 360,
+          "u": "gr",
+          "insumoId": "excel-A4",
+          "factor": 1,
+          "source": "G26",
+          "originalCostFormula": "=Insumos!E4"
+        },
+        {
+          "i": "Vainilla",
+          "qty": 10,
+          "qtyText": 10,
+          "u": "ml",
+          "insumoId": "excel-A31",
+          "factor": 1,
+          "source": "G27",
+          "originalCostFormula": "=Insumos!E31"
+        }
+      ]
+    },
+    {
+      "id": 1008,
+      "name": "Betún mantequilla",
+      "source": "recetario!G31",
+      "yieldText": "",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Mantequilla",
+          "qty": 250,
+          "qtyText": 250,
+          "u": "gr",
+          "insumoId": "excel-A52",
+          "factor": 1,
+          "source": "G32",
+          "originalCostFormula": "=Insumos!E60"
+        },
+        {
+          "i": "Azúcar glass",
+          "qty": 360,
+          "qtyText": 360,
+          "u": "gr",
+          "insumoId": "excel-A4",
+          "factor": 1,
+          "source": "G33",
+          "originalCostFormula": "=Insumos!E11"
+        },
+        {
+          "i": "Vainilla",
+          "qty": 10,
+          "qtyText": 10,
+          "u": "ml",
+          "insumoId": null,
+          "factor": null,
+          "source": "G34",
+          "originalCostFormula": "=Insumos!E38"
+        }
+      ]
+    },
+    {
+      "id": 1009,
+      "name": "Pay convencional",
+      "source": "recetario!G38",
+      "yieldText": "",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Queso crema",
+          "qty": 200,
+          "qtyText": 200,
+          "u": "gr",
+          "insumoId": "excel-A57",
+          "factor": 1,
+          "source": "G39",
+          "originalCostFormula": "=Insumos!E57"
+        },
+        {
+          "i": "Lechera",
+          "qty": 375,
+          "qtyText": 375,
+          "u": "gr",
+          "insumoId": "excel-A47",
+          "factor": 1,
+          "source": "G40",
+          "originalCostFormula": "=Insumos!E47"
+        },
+        {
+          "i": "Vainilla",
+          "qty": 10,
+          "qtyText": 10,
+          "u": "ml",
+          "insumoId": "excel-A31",
+          "factor": 1,
+          "source": "G41",
+          "originalCostFormula": "=Insumos!E31"
+        },
+        {
+          "i": "Evaporada",
+          "qty": 375,
+          "qtyText": 375,
+          "u": "gr",
+          "insumoId": "excel-A33",
+          "factor": null,
+          "source": "G42",
+          "originalCostFormula": "=Insumos!E33"
+        },
+        {
+          "i": "Huevo",
+          "qty": 5,
+          "qtyText": 5,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "G43",
+          "originalCostFormula": "=Insumos!E45"
+        }
+      ]
+    },
+    {
+      "id": 1010,
+      "name": "Bizcocho para 3 leches PEE",
+      "source": "recetario!M2",
+      "yieldText": "salen 2 molde 22 cm ",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Harina PEE",
+          "qty": 1000,
+          "qtyText": 1000,
+          "u": "gr",
+          "insumoId": "excel-A39",
+          "factor": 1,
+          "source": "M3",
+          "originalCostFormula": "=Insumos!E39"
+        },
+        {
+          "i": "Huevo",
+          "qty": 7,
+          "qtyText": 7,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "M4",
+          "originalCostFormula": "=Insumos!E45"
+        },
+        {
+          "i": "Leche",
+          "qty": 350,
+          "qtyText": 350,
+          "u": "ml",
+          "insumoId": "excel-A46",
+          "factor": 1,
+          "source": "M5",
+          "originalCostFormula": "=Insumos!E46"
+        },
+        {
+          "i": "Escencia",
+          "qty": 15,
+          "qtyText": 15,
+          "u": "ml",
+          "insumoId": "excel-A31",
+          "factor": 1,
+          "source": "M6",
+          "originalCostFormula": "=Insumos!E31"
+        }
+      ]
+    },
+    {
+      "id": 1011,
+      "name": "Bizcocho redvelvet o cualquier betty crocker",
+      "source": "recetario!M10",
+      "yieldText": "salen 1 molde 22 cm ",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Harina PEE",
+          "qty": 375,
+          "qtyText": 375,
+          "u": "gr",
+          "insumoId": "excel-A42",
+          "factor": null,
+          "source": "M11",
+          "originalCostFormula": "=Insumos!E42"
+        },
+        {
+          "i": "Huevo",
+          "qty": 3,
+          "qtyText": 3,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "M12",
+          "originalCostFormula": "=Insumos!E45"
+        },
+        {
+          "i": "Leche",
+          "qty": 350,
+          "qtyText": 350,
+          "u": "ml",
+          "insumoId": "excel-A46",
+          "factor": 1,
+          "source": "M13",
+          "originalCostFormula": "=Insumos!E46"
+        },
+        {
+          "i": "Aceite",
+          "qty": 175,
+          "qtyText": "=N13/2",
+          "u": "ml",
+          "insumoId": "excel-A3",
+          "factor": 1,
+          "source": "M14",
+          "originalCostFormula": "=Insumos!E3"
+        }
+      ]
+    },
+    {
+      "id": 1012,
+      "name": "Bizcocho Zanahoria",
+      "source": "recetario!M18",
+      "yieldText": "salen 1 molde 22 cm ",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Harina PZ",
+          "qty": 500,
+          "qtyText": 500,
+          "u": "gr",
+          "insumoId": "excel-A44",
+          "factor": 1,
+          "source": "M19",
+          "originalCostFormula": "=Insumos!E44"
+        },
+        {
+          "i": "Huevo",
+          "qty": 2,
+          "qtyText": 2,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "M20",
+          "originalCostFormula": "=P12"
+        },
+        {
+          "i": "Leche",
+          "qty": 175,
+          "qtyText": 175,
+          "u": "ml",
+          "insumoId": "excel-A46",
+          "factor": 1,
+          "source": "M21",
+          "originalCostFormula": "=P13"
+        },
+        {
+          "i": "Aceite",
+          "qty": 50,
+          "qtyText": 50,
+          "u": "ml",
+          "insumoId": "excel-A3",
+          "factor": 1,
+          "source": "M22",
+          "originalCostFormula": "=P14"
+        },
+        {
+          "i": "Nuez",
+          "qty": 50,
+          "qtyText": 50,
+          "u": "gr",
+          "insumoId": "excel-A55",
+          "factor": 1,
+          "source": "M23",
+          "originalCostFormula": "=Insumos!E55"
+        },
+        {
+          "i": "Zanahoria",
+          "qty": 1,
+          "qtyText": 1,
+          "u": "ea",
+          "insumoId": null,
+          "factor": null,
+          "source": "M24",
+          "originalCostFormula": 0.5
+        }
+      ]
+    },
+    {
+      "id": 1013,
+      "name": "Bizcocho Humedo",
+      "source": "recetario!M28",
+      "yieldText": "salen 2 molde 22 cm ",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Harina EH",
+          "qty": 1000,
+          "qtyText": 1000,
+          "u": "gr",
+          "insumoId": "excel-A41",
+          "factor": 1,
+          "source": "M29",
+          "originalCostFormula": "=Insumos!E41"
+        },
+        {
+          "i": "Huevo",
+          "qty": 7,
+          "qtyText": 7,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "M30",
+          "originalCostFormula": "=P20"
+        },
+        {
+          "i": "Leche",
+          "qty": 300,
+          "qtyText": 300,
+          "u": "ml",
+          "insumoId": "excel-A46",
+          "factor": 1,
+          "source": "M31",
+          "originalCostFormula": "=P13"
+        },
+        {
+          "i": "Escencia",
+          "qty": 15,
+          "qtyText": 15,
+          "u": "ml",
+          "insumoId": "excel-A31",
+          "factor": 1,
+          "source": "M32",
+          "originalCostFormula": "=P6"
+        },
+        {
+          "i": "Aceite",
+          "qty": 100,
+          "qtyText": 100,
+          "u": "ml",
+          "insumoId": "excel-A3",
+          "factor": 1,
+          "source": "M33",
+          "originalCostFormula": "=P22"
+        }
+      ]
+    },
+    {
+      "id": 1014,
+      "name": "Bizcocho creamy cake proveedora",
+      "source": "recetario!M38",
+      "yieldText": "salen 2 molde 22 cm ",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Harina EH",
+          "qty": 1000,
+          "qtyText": 1000,
+          "u": "gr",
+          "insumoId": "excel-A58",
+          "factor": 1,
+          "source": "M39",
+          "originalCostFormula": "=Insumos!E58"
+        },
+        {
+          "i": "Huevo",
+          "qty": 7,
+          "qtyText": 7,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "M40",
+          "originalCostFormula": "=P30"
+        },
+        {
+          "i": "Leche",
+          "qty": 230,
+          "qtyText": 230,
+          "u": "ml",
+          "insumoId": "excel-A46",
+          "factor": 1,
+          "source": "M41",
+          "originalCostFormula": "=Insumos!E46"
+        },
+        {
+          "i": "Escencia",
+          "qty": 15,
+          "qtyText": 15,
+          "u": "ml",
+          "insumoId": "excel-A31",
+          "factor": 1,
+          "source": "M42",
+          "originalCostFormula": "=Insumos!E31"
+        },
+        {
+          "i": "Aceite",
+          "qty": 300,
+          "qtyText": 300,
+          "u": "ml",
+          "insumoId": "excel-A3",
+          "factor": 1,
+          "source": "M43",
+          "originalCostFormula": "=Insumos!E3"
+        }
+      ]
+    },
+    {
+      "id": 1015,
+      "name": "Bizcocho redvelvet o cualquier betty crocker",
+      "source": "recetario!S2",
+      "yieldText": "salen 1 molde 22 cm ",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Harina ",
+          "qty": 180,
+          "qtyText": 180,
+          "u": "gr",
+          "insumoId": "excel-A38",
+          "factor": 1,
+          "source": "S3",
+          "originalCostFormula": "=Insumos!E38"
+        },
+        {
+          "i": "Huevo",
+          "qty": 2,
+          "qtyText": 2,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "S4",
+          "originalCostFormula": "=P4"
+        },
+        {
+          "i": "CHISPAS",
+          "qty": 50,
+          "qtyText": 50,
+          "u": "GR",
+          "insumoId": "excel-A24",
+          "factor": 1,
+          "source": "S5",
+          "originalCostFormula": "=Insumos!E16"
+        },
+        {
+          "i": "MANTEQUILLA",
+          "qty": 100,
+          "qtyText": 100,
+          "u": "GR",
+          "insumoId": "excel-A52",
+          "factor": 1,
+          "source": "S6",
+          "originalCostFormula": "=Insumos!E43"
+        }
+      ]
+    },
+    {
+      "id": 1016,
+      "name": "galletas betty crocker",
+      "source": "recetario!S10",
+      "yieldText": "salen 11 galletas 55 gr",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Harina PEE",
+          "qty": 375,
+          "qtyText": 375,
+          "u": "gr",
+          "insumoId": null,
+          "factor": null,
+          "source": "S11",
+          "originalCostFormula": 55
+        },
+        {
+          "i": "Huevo",
+          "qty": 1,
+          "qtyText": 1,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "S12",
+          "originalCostFormula": "=P4"
+        },
+        {
+          "i": "CHISPAS",
+          "qty": 50,
+          "qtyText": 50,
+          "u": "GR",
+          "insumoId": "excel-A24",
+          "factor": 1,
+          "source": "S13",
+          "originalCostFormula": "=Insumos!E24"
+        },
+        {
+          "i": "MANTEQUILLA",
+          "qty": 100,
+          "qtyText": 100,
+          "u": "GR",
+          "insumoId": "excel-A52",
+          "factor": 1,
+          "source": "S14",
+          "originalCostFormula": "=Insumos!E52"
+        }
+      ]
+    },
+    {
+      "id": 1017,
+      "name": "pan de plátano",
+      "source": "recetario!S18",
+      "yieldText": "salen 11 rebanadas",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Harina ",
+          "qty": 180,
+          "qtyText": 180,
+          "u": "gr",
+          "insumoId": "excel-A38",
+          "factor": 1,
+          "source": "S19",
+          "originalCostFormula": "=Insumos!E38"
+        },
+        {
+          "i": "Huevo",
+          "qty": 2,
+          "qtyText": 2,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "S20",
+          "originalCostFormula": "=P20"
+        },
+        {
+          "i": "CHISPAS",
+          "qty": 50,
+          "qtyText": 50,
+          "u": "GR",
+          "insumoId": "excel-A24",
+          "factor": 1,
+          "source": "S21",
+          "originalCostFormula": "=Insumos!E32"
+        },
+        {
+          "i": "MANTEQUILLA",
+          "qty": 113,
+          "qtyText": 113,
+          "u": "GR",
+          "insumoId": "excel-A52",
+          "factor": 1,
+          "source": "S22",
+          "originalCostFormula": "=V14"
+        },
+        {
+          "i": "Platano",
+          "qty": 3,
+          "qtyText": 3,
+          "u": "ea",
+          "insumoId": null,
+          "factor": null,
+          "source": "S23",
+          "originalCostFormula": 10
+        },
+        {
+          "i": "bicarbonato",
+          "qty": 6.5,
+          "qtyText": 6.5,
+          "u": "gr",
+          "insumoId": "excel-A60",
+          "factor": 1,
+          "source": "S24",
+          "originalCostFormula": 2
+        },
+        {
+          "i": "rexal",
+          "qty": 6.5,
+          "qtyText": 6.5,
+          "u": "gr",
+          "insumoId": "excel-A61",
+          "factor": 1,
+          "source": "S25",
+          "originalCostFormula": 2
+        },
+        {
+          "i": "canela",
+          "qty": 6.5,
+          "qtyText": 6.5,
+          "u": "gr",
+          "insumoId": "excel-A19",
+          "factor": 1,
+          "source": "S26",
+          "originalCostFormula": "=Insumos!E19"
+        },
+        {
+          "i": "Azúcar",
+          "qty": 60,
+          "qtyText": 60,
+          "u": "gr",
+          "insumoId": "excel-A7",
+          "factor": 1,
+          "source": "S27",
+          "originalCostFormula": "=Insumos!E7"
+        },
+        {
+          "i": "Vainilla",
+          "qty": 10,
+          "qtyText": 10,
+          "u": "ml",
+          "insumoId": "excel-A31",
+          "factor": 1,
+          "source": "S28",
+          "originalCostFormula": "=J17"
+        }
+      ]
+    },
+    {
+      "id": 1018,
+      "name": "Brownie",
+      "source": "recetario!S32",
+      "yieldText": "",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Harina ",
+          "qty": 120,
+          "qtyText": 120,
+          "u": "gr",
+          "insumoId": "excel-A38",
+          "factor": 1,
+          "source": "S33",
+          "originalCostFormula": "=Insumos!E53"
+        },
+        {
+          "i": "Huevo",
+          "qty": 4,
+          "qtyText": 4,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "S34",
+          "originalCostFormula": "=P30"
+        },
+        {
+          "i": "Chocolate",
+          "qty": 180,
+          "qtyText": 180,
+          "u": "gr",
+          "insumoId": null,
+          "factor": null,
+          "source": "S35",
+          "originalCostFormula": "=Insumos!E24"
+        },
+        {
+          "i": "MANTEQUILLA",
+          "qty": 150,
+          "qtyText": 150,
+          "u": "gr",
+          "insumoId": "excel-A52",
+          "factor": 1,
+          "source": "S36",
+          "originalCostFormula": "=Insumos!E52"
+        },
+        {
+          "i": "Azúcar refinada",
+          "qty": 150,
+          "qtyText": 150,
+          "u": "gr",
+          "insumoId": "excel-A7",
+          "factor": 1,
+          "source": "S37",
+          "originalCostFormula": "=Insumos!E7"
+        },
+        {
+          "i": "Azúcar mascabado",
+          "qty": 165,
+          "qtyText": 165,
+          "u": "gr",
+          "insumoId": "excel-A5",
+          "factor": 1,
+          "source": "S38",
+          "originalCostFormula": "=Insumos!E5"
+        },
+        {
+          "i": "Cocoa",
+          "qty": 50,
+          "qtyText": 50,
+          "u": "gr",
+          "insumoId": null,
+          "factor": null,
+          "source": "S39",
+          "originalCostFormula": "=Insumos!E59"
+        },
+        {
+          "i": "Chocolate/ chispas",
+          "qty": 60,
+          "qtyText": 60,
+          "u": "gr",
+          "insumoId": null,
+          "factor": null,
+          "source": "S40",
+          "originalCostFormula": "=Insumos!E33"
+        },
+        {
+          "i": "Vainilla",
+          "qty": 10,
+          "qtyText": 10,
+          "u": "ml",
+          "insumoId": null,
+          "factor": null,
+          "source": "S41",
+          "originalCostFormula": "=Insumos!E21"
+        }
+      ]
+    },
+    {
+      "id": 1019,
+      "name": "galletas caseras",
+      "source": "recetario!Y10",
+      "yieldText": "salen 8 galletas 55 gr",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Harina",
+          "qty": 180,
+          "qtyText": 180,
+          "u": "gr",
+          "insumoId": "excel-A38",
+          "factor": 1,
+          "source": "Y11",
+          "originalCostFormula": "=Insumos!E38"
+        },
+        {
+          "i": "Huevo",
+          "qty": 1,
+          "qtyText": 1,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "Y12",
+          "originalCostFormula": "=Insumos!E45"
+        },
+        {
+          "i": "CHISPAS",
+          "qty": 50,
+          "qtyText": 50,
+          "u": "GR",
+          "insumoId": "excel-A24",
+          "factor": 1,
+          "source": "Y13",
+          "originalCostFormula": "=Insumos!E24"
+        },
+        {
+          "i": "MANTEQUILLA",
+          "qty": 90,
+          "qtyText": 90,
+          "u": "GR",
+          "insumoId": "excel-A51",
+          "factor": 1,
+          "source": "Y14",
+          "originalCostFormula": "=Insumos!E51"
+        },
+        {
+          "i": "Azúcar mascabado",
+          "qty": 60,
+          "qtyText": 60,
+          "u": "gr",
+          "insumoId": "excel-A5",
+          "factor": 1,
+          "source": "Y15",
+          "originalCostFormula": "=Insumos!E5"
+        },
+        {
+          "i": "A refinada",
+          "qty": 40,
+          "qtyText": 40,
+          "u": "gr",
+          "insumoId": "excel-A7",
+          "factor": 1,
+          "source": "Y16",
+          "originalCostFormula": "=Insumos!E7"
+        },
+        {
+          "i": "Bicarbonato",
+          "qty": 2,
+          "qtyText": 2,
+          "u": "gr",
+          "insumoId": "excel-A60",
+          "factor": 1,
+          "source": "Y17",
+          "originalCostFormula": "=Insumos!E60"
+        },
+        {
+          "i": "Polvo p hornear",
+          "qty": 3,
+          "qtyText": 3,
+          "u": "gr",
+          "insumoId": "excel-A61",
+          "factor": 1,
+          "source": "Y18",
+          "originalCostFormula": "=Insumos!E61"
+        },
+        {
+          "i": "maizena",
+          "qty": 10,
+          "qtyText": 10,
+          "u": "gr",
+          "insumoId": "excel-A50",
+          "factor": 1,
+          "source": "Y19",
+          "originalCostFormula": "=Insumos!E50"
+        }
+      ]
+    },
+    {
+      "id": 1020,
+      "name": "GALLETAS CALABAZA",
+      "source": "recetario!Y25",
+      "yieldText": "salen 11 60gr c/u",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "CALABAZA",
+          "qty": 240,
+          "qtyText": 240,
+          "u": "gr",
+          "insumoId": "excel-A62",
+          "factor": 1,
+          "source": "Y26",
+          "originalCostFormula": "=Insumos!E62"
+        },
+        {
+          "i": "HARINA",
+          "qty": 220,
+          "qtyText": 220,
+          "u": "gr",
+          "insumoId": "excel-A38",
+          "factor": 1,
+          "source": "Y27",
+          "originalCostFormula": "=AB17"
+        },
+        {
+          "i": "HUEVO",
+          "qty": 2,
+          "qtyText": 2,
+          "u": "ea",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "Y28",
+          "originalCostFormula": "=Insumos!E45"
+        },
+        {
+          "i": "REXAL",
+          "qty": 0.5,
+          "qtyText": 0.5,
+          "u": "cd",
+          "insumoId": "excel-A61",
+          "factor": null,
+          "source": "Y29",
+          "originalCostFormula": "=8*Insumos!E61"
+        },
+        {
+          "i": "BICARBONATO",
+          "qty": 0.5,
+          "qtyText": 0.5,
+          "u": "cd",
+          "insumoId": "excel-A60",
+          "factor": null,
+          "source": "Y30",
+          "originalCostFormula": "=8*Insumos!E60"
+        },
+        {
+          "i": "Pumpkin ",
+          "qty": 1,
+          "qtyText": 1,
+          "u": "cd",
+          "insumoId": "excel-A63",
+          "factor": null,
+          "source": "Y31",
+          "originalCostFormula": "=15*Insumos!E63"
+        },
+        {
+          "i": "canela ",
+          "qty": 0.5,
+          "qtyText": 0.5,
+          "u": "cd",
+          "insumoId": "excel-A19",
+          "factor": null,
+          "source": "Y32",
+          "originalCostFormula": "=Insumos!E19"
+        },
+        {
+          "i": "Mantequilla",
+          "qty": 115,
+          "qtyText": 115,
+          "u": "gr",
+          "insumoId": "excel-A51",
+          "factor": 1,
+          "source": "Y33",
+          "originalCostFormula": "=Insumos!E51"
+        },
+        {
+          "i": "Azúcar mascabado",
+          "qty": 22,
+          "qtyText": 22,
+          "u": "gr",
+          "insumoId": "excel-A5",
+          "factor": 1,
+          "source": "Y34",
+          "originalCostFormula": "=Insumos!E5"
+        }
+      ]
+    },
+    {
+      "id": 1021,
+      "name": "Pastel 18 cm",
+      "source": "Receta!A1",
+      "yieldText": "",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Huevo",
+          "qty": null,
+          "qtyText": null,
+          "u": "pieza",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "A5",
+          "originalCostFormula": "=B5*Insumos!E2"
+        },
+        {
+          "i": "Harina",
+          "qty": null,
+          "qtyText": null,
+          "u": "g",
+          "insumoId": "excel-A38",
+          "factor": 1,
+          "source": "A6",
+          "originalCostFormula": "=B6*Insumos!E3"
+        },
+        {
+          "i": "Leche",
+          "qty": null,
+          "qtyText": null,
+          "u": "ml",
+          "insumoId": "excel-A46",
+          "factor": 1,
+          "source": "A7",
+          "originalCostFormula": "=B7*Insumos!E4"
+        },
+        {
+          "i": "Mantequilla",
+          "qty": null,
+          "qtyText": null,
+          "u": "g",
+          "insumoId": "excel-A52",
+          "factor": 1,
+          "source": "A8",
+          "originalCostFormula": "=B8*Insumos!E5"
+        }
+      ]
+    },
+    {
+      "id": 1022,
+      "name": "Pastel 20 cm",
+      "source": "Receta!G1",
+      "yieldText": "",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Huevo",
+          "qty": null,
+          "qtyText": null,
+          "u": "pieza",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "G5",
+          "originalCostFormula": "=H5*Insumos!E2"
+        },
+        {
+          "i": "Harina",
+          "qty": null,
+          "qtyText": null,
+          "u": "g",
+          "insumoId": "excel-A38",
+          "factor": 1,
+          "source": "G6",
+          "originalCostFormula": "=H6*Insumos!E3"
+        },
+        {
+          "i": "Leche",
+          "qty": null,
+          "qtyText": null,
+          "u": "ml",
+          "insumoId": "excel-A46",
+          "factor": 1,
+          "source": "G7",
+          "originalCostFormula": "=H7*Insumos!E4"
+        },
+        {
+          "i": "Mantequilla",
+          "qty": null,
+          "qtyText": null,
+          "u": "g",
+          "insumoId": "excel-A52",
+          "factor": 1,
+          "source": "G8",
+          "originalCostFormula": "=H8*Insumos!E5"
+        }
+      ]
+    },
+    {
+      "id": 1023,
+      "name": "Pastel 22 cm",
+      "source": "Receta!M1",
+      "yieldText": "",
+      "notes": "",
+      "ingredients": [
+        {
+          "i": "Huevo",
+          "qty": 3,
+          "qtyText": 3,
+          "u": "pieza",
+          "insumoId": "excel-A45",
+          "factor": 1,
+          "source": "M5",
+          "originalCostFormula": "=N5*Insumos!E2"
+        },
+        {
+          "i": "Harina",
+          "qty": 500,
+          "qtyText": 500,
+          "u": "g",
+          "insumoId": "excel-A38",
+          "factor": 1,
+          "source": "M6",
+          "originalCostFormula": "=N6*Insumos!E3"
+        },
+        {
+          "i": "Leche",
+          "qty": 175,
+          "qtyText": 175,
+          "u": "ml",
+          "insumoId": "excel-A46",
+          "factor": 1,
+          "source": "M7",
+          "originalCostFormula": "=N7*Insumos!E4"
+        }
+      ]
+    }
+  ],
+  "quotes": [
+    {
+      "id": 1,
+      "createdAt": "Ejemplo",
+      "cliente": "Ejemplo",
+      "notas": "Cotización basada en tu hoja Cotizador",
+      "size": "22 cm",
+      "base": 233.24,
+      "pan": "Vainilla",
+      "panCost": 0,
+      "consistencia": "Tres leches",
+      "consistenciaCost": 70,
+      "relleno": "Nuez",
+      "rellenoCost": 70,
+      "betun": "Chantilly",
+      "betunCost": 0,
+      "diseno": "Sencillo",
+      "disenoCost": 0,
+      "merma": 10,
+      "margen": 30,
+      "round": true,
+      "customExtras": [],
+      "subtotal": 373.24,
+      "costoConMerma": 410.57,
+      "precioSugerido": 586.53,
+      "precioFinal": 590
+    }
+  ],
+  "orders": [
+    {
+      "id": 101,
+      "name": "Brayhan",
+      "cost": 360,
+      "date": "2026-06-05",
+      "time": "15:00",
+      "product": "Pay 18 cm tortuga",
+      "pan": "",
+      "betun": "",
+      "status": "Pendiente",
+      "notes": ""
+    },
+    {
+      "id": 102,
+      "name": "MICHELLE",
+      "cost": 300,
+      "date": "2026-09-05",
+      "time": "13:30",
+      "product": "Zanahoria 18 cm",
+      "pan": "Zanahoria",
+      "betun": "queso crema",
+      "status": "Pendiente",
+      "notes": ""
+    },
+    {
+      "id": 103,
+      "name": "Karime",
+      "cost": 280,
+      "date": "2026-09-05",
+      "time": "20:00",
+      "product": "Maceta gerbera",
+      "pan": "chocolate / fresas con crema",
+      "betun": "mantequilla blanco",
+      "status": "Pendiente",
+      "notes": ""
+    },
+    {
+      "id": 104,
+      "name": "Suegris",
+      "cost": 250,
+      "date": "2026-09-05",
+      "time": "19:30",
+      "product": "Maceta gerbera",
+      "pan": "chocolate / fresas con crema",
+      "betun": "mantequilla blanco",
+      "status": "Pendiente",
+      "notes": ""
+    },
+    {
+      "id": 105,
+      "name": "Abuelita Oscar",
+      "cost": 250,
+      "date": "2026-09-05",
+      "time": "19:30",
+      "product": "Maceta gerbera",
+      "pan": "Zanahoria",
+      "betun": "mantequilla blanco",
+      "status": "Pendiente",
+      "notes": ""
+    },
+    {
+      "id": 106,
+      "name": "Samantha",
+      "cost": 240,
+      "date": "2026-09-05",
+      "time": "07:00",
+      "product": "Mini cake rosa",
+      "pan": "Zanahoria",
+      "betun": "mantequilla blanco",
+      "status": "Pendiente",
+      "notes": ""
+    },
+    {
+      "id": 107,
+      "name": "Abiud",
+      "cost": 650,
+      "date": "2026-09-05",
+      "time": "07:00",
+      "product": "Zanahoria doble 22 cm",
+      "pan": "Zanahoria",
+      "betun": "queso crema",
+      "status": "Pendiente",
+      "notes": ""
+    },
+    {
+      "id": 108,
+      "name": "Abiud",
+      "cost": 600,
+      "date": "2026-09-05",
+      "time": "07:00",
+      "product": "Chocolate doble 22 cm",
+      "pan": "chocolate",
+      "betun": "Chantilly",
+      "status": "Pendiente",
+      "notes": ""
+    },
+    {
+      "id": 109,
+      "name": "Mariana",
+      "cost": 380,
+      "date": "2026-10-05",
+      "time": "12:00",
+      "product": "Pay 22 cm Frambuesa",
+      "pan": "",
+      "betun": "Chantilly",
+      "status": "Pendiente",
+      "notes": ""
+    }
+  ],
+  "sales": [
+    {
+      "id": 201,
+      "month": "JUNIO",
+      "concept": "Pastel Saúl",
+      "amount": 1100
+    },
+    {
+      "id": 202,
+      "month": "JUNIO",
+      "concept": "Pastel Karime L",
+      "amount": 550
+    },
+    {
+      "id": 203,
+      "month": "JUNIO",
+      "concept": "Pastel Karime Pa",
+      "amount": 550
+    },
+    {
+      "id": 204,
+      "month": "JUNIO",
+      "concept": "Pastel mamá Karime",
+      "amount": 550
+    },
+    {
+      "id": 205,
+      "month": "JUNIO",
+      "concept": "Pastel Jesús",
+      "amount": 410
+    },
+    {
+      "id": 206,
+      "month": "JUNIO",
+      "concept": "Flan Saúl",
+      "amount": 130
+    },
+    {
+      "id": 207,
+      "month": "JUNIO",
+      "concept": "Pastel Karime almendra",
+      "amount": 150
+    }
+  ]
+};
+
+    let storageBlocked = false;
+    let db = null;
+    let quoteExtras = [];
+    let recipeIngredients = [];
+
+    function seedCopy() {
+      return JSON.parse(JSON.stringify(SEED));
+    }
+
+    function loadDB() {
+      const raw = localStorage.getItem(DB_KEY);
+      if (!raw) return seedCopy();
+      try { return prepareDB(JSON.parse(raw)); }
+      catch (e) {
+        console.error(e);
+        alert("Los datos guardados no se pudieron leer. No se sobrescribirán. Exporta o recupera el respaldo antes de guardar.");
+        storageBlocked = true;
+        return seedCopy();
+      }
+    }
+
+    function saveDB() {
+      if (storageBlocked) { alert("Guardado bloqueado para proteger los datos anteriores."); return false; }
+      try { localStorage.setItem(DB_KEY, JSON.stringify(db)); return true; }
+      catch (e) { alert("No se pudo guardar. Exporta un respaldo antes de cerrar esta página."); return false; }
+    }
+
+    function uid() {
+      return Date.now() + Math.floor(Math.random() * 10000);
+    }
+
+    function fmt(n) {
+      return "$" + Number(n || 0).toLocaleString("es-MX", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function esc(s) {
+      return String(s ?? "").replace(/[&<>"']/g, function (c) {
+        return {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        }[c];
+      });
+    }
+
+    function val(id) {
+      const el = document.getElementById(id);
+      return el ? el.value : "";
+    }
+
+    function numVal(id) {
+      const el = document.getElementById(id);
+      return parseFloat(el ? el.value : 0) || 0;
+    }
+
+    function showTab(name) {
+      document.querySelectorAll(".tab").forEach(function (t) {
+        t.classList.remove("active");
+      });
+
+      document.querySelectorAll(".nav-btn").forEach(function (b) {
+        b.classList.remove("active");
+      });
+
+      document.getElementById("tab-" + name).classList.add("active");
+      document.getElementById("nav-" + name).classList.add("active");
+      window.scrollTo(0, 0);
+    }
+
+    /* ============================= */
+    /* SETTINGS                      */
+    /* ============================= */
+
+    function renderSettings() {
+      document.getElementById("setMerma").value = db.settings.merma;
+      document.getElementById("setMargen").value = db.settings.margen;
+      document.getElementById("setRound").checked = !!db.settings.round;
+    }
+
+    function applySettingsToQuoteForm() {
+      document.getElementById("qMerma").value = db.settings.merma;
+      document.getElementById("qMargen").value = db.settings.margen;
+      document.getElementById("qRound").checked = !!db.settings.round;
+    }
+
+    function saveSettings() {
+      const issues = [];
+      inputNumber("setMerma", issues, "Merma");
+      const margin = inputNumber("setMargen", issues, "Utilidad");
+      if (margin >= 100) issues.push("La utilidad debe ser menor a 100%.");
+      if (issues.length) { alert(issues.join("\n")); return; }
+      db.settings = {
+        merma: numVal("setMerma"),
+        margen: numVal("setMargen"),
+        round: document.getElementById("setRound").checked
+      };
+
+      saveDB();
+      applySettingsToQuoteForm();
+      renderQuoteSummary();
+      alert("Ajustes guardados.");
+    }
+
+    /* ============================= */
+    /* COTIZADOR                     */
+    /* ============================= */
+
+    function quoteOptions(cat) {
+      const labels = {
+        Pan: ["Vainilla", "Chocolate", "Zanahoria", "Oreo", "Redvelvet"],
+        Consistencia: ["Normal", "Tres leches"],
+        Relleno: ["Sin relleno", "Betún", "Fresas con crema", "Nuez", "Pay", "Cheescake", "Mermelada", "Coctel de frutas", "Crema de avellana", "Fruta (sujeto a disponibilidad)"],
+        "Betún": ["Mantequilla", "Queso crema", "Butter ganashe", "Chantilly"],
+        "Diseño": ["Sencillo", "Personalizado", "Muy elaborado"]
+      }[cat] || [];
+      const options = labels.map(label => ({ label, cost: 0 }));
+      for (const e of db.extras.filter(e => e.cat === cat)) {
+        const existing = options.find(o => o.label === e.option);
+        if (existing) existing.cost = e.cost;
+        else options.push({label: e.option, cost: e.cost});
+      }
+      return options;
+    }
+
+    function selectedSize() {
+      const el = document.getElementById("qSize");
+      const idx = el ? (Number(el.value) || 0) : 0;
+      return db.sizes[idx] || db.sizes[0];
+    }
+
+    function selectedQuoteOption(cat, id) {
+      const opts = quoteOptions(cat);
+      const el = document.getElementById(id);
+      const idx = el ? (Number(el.value) || 0) : 0;
+      return opts[idx] || opts[0];
+    }
+
+    function fillSizeSelect(selectedLabel) {
+      const el = document.getElementById("qSize");
+      if (!el) return;
+
+      el.innerHTML = db.sizes
+        .map(function (s, i) {
+          return `<option value="${i}">${esc(s.label)}${s.portions ? " · " + esc(s.portions) + " porciones" : ""}</option>`;
+        })
+        .join("");
+
+      let idx = db.sizes.findIndex(function (s) {
+        return s.label === selectedLabel;
+      });
+
+      if (idx < 0) {
+        idx = db.sizes.findIndex(function (s) {
+          return String(s.label).includes("22");
+        });
+      }
+
+      if (idx < 0) idx = 0;
+
+      el.value = String(idx);
+    }
+
+    function fillQuoteSelect(id, cat, selectedLabel) {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const opts = quoteOptions(cat);
+
+      el.innerHTML = opts
+        .map(function (o, i) {
+          return `<option value="${i}">${esc(o.label)}${o.cost ? " +" + fmt(o.cost) : ""}</option>`;
+        })
+        .join("");
+
+      let idx = opts.findIndex(function (o) {
+        return o.label === selectedLabel;
+      });
+
+      if (idx < 0) idx = 0;
+
+      el.value = String(idx);
+    }
+
+    function renderCotizadorSelects() {
+      const sizeEl = document.getElementById("qSize");
+      const hasOptions = sizeEl && sizeEl.options.length > 0;
+
+      const currentSize = hasOptions ? selectedSize().label : "22 cm";
+      const currentPan = hasOptions ? selectedQuoteOption("Pan", "qPan").label : "Vainilla";
+      const currentCons = hasOptions ? selectedQuoteOption("Consistencia", "qConsistencia").label : "Tres leches";
+      const currentRelleno = hasOptions ? selectedQuoteOption("Relleno", "qRelleno").label : "Nuez";
+      const currentBetun = hasOptions ? selectedQuoteOption("Betún", "qBetun").label : "Chantilly";
+      const currentDiseno = hasOptions ? selectedQuoteOption("Diseño", "qDiseno").label : "Sencillo";
+
+      const currentBase = val("qBase");
+
+      fillSizeSelect(currentSize);
+      fillQuoteSelect("qPan", "Pan", currentPan);
+      fillQuoteSelect("qConsistencia", "Consistencia", currentCons);
+      fillQuoteSelect("qRelleno", "Relleno", currentRelleno);
+      fillQuoteSelect("qBetun", "Betún", currentBetun);
+      fillQuoteSelect("qDiseno", "Diseño", currentDiseno);
+
+      if (currentBase !== "") {
+        document.getElementById("qBase").value = currentBase;
+      } else {
+        setBaseFromSize();
+      }
+
+      renderQuoteSummary();
+    }
+
+    function setBaseFromSize() {
+      const s = selectedSize();
+      document.getElementById("qBase").value = Number(s.base || 0).toFixed(2);
+    }
+
+    function onSizeChange() {
+      setBaseFromSize();
+      applyQuotePreset();
+      renderQuoteSummary();
+    }
+
+    function calcQuote() {
+      const issues = [];
+      const base = inputNumber("qBase", issues, "Otros costos");
+      const parts = {};
+      for (const [key, cat, selector] of COMPONENTS) {
+        const option = selectedQuoteOption(cat, selector);
+        parts[key] = {...option, cost: componentCost(key, option, issues)};
+      }
+      const builtInExtras = Object.values(parts).reduce((sum, p) => sum + (p.cost || 0), 0);
+      const customTotal = quoteExtras.reduce((sum, item) => {
+        const supply = item.insumoId ? db.insumos.find(s => s.id === item.insumoId) : null;
+        if (item.insumoId) {
+          if (item.u && unitKey(item.u) !== unitKey(supply?.u)) { issues.push(item.name + ": cambió la unidad; agrega de nuevo el insumo."); return sum; }
+          const cost = unitCost(supply);
+          if (cost === null) { issues.push(item.name + ": precio o presentación pendiente."); return sum; }
+          if (!Number.isFinite(item.qty) || item.qty < 0) { issues.push(item.name + ": cantidad inválida."); return sum; }
+          item.cost = cost * item.qty;
+        }
+        if (!Number.isFinite(item.cost) || item.cost < 0) issues.push(item.name + ": costo inválido.");
+        return sum + (Number.isFinite(item.cost) ? item.cost : 0);
+      }, 0);
+      const merma = inputNumber("qMerma", issues, "Merma");
+      const margen = inputNumber("qMargen", issues, "Utilidad");
+      if (margen >= 100) issues.push("La utilidad sobre precio debe ser menor a 100%.");
+      const figura = val("qFigura") === "Otro" ? val("qFiguraOtra").trim() : val("qFigura");
+      if (!figura) issues.push("Describe la figura del pastel.");
+      const subtotal = base + builtInExtras + customTotal;
+      const costoConMerma = subtotal * (1 + merma / 100);
+      const precioSugerido = issues.length ? null : costoConMerma / (1 - margen / 100);
+      const precioFinal = precioSugerido === null ? null : document.getElementById("qRound").checked ? Math.ceil(precioSugerido / 10) * 10 : precioSugerido;
+      return {size: selectedSize().label, figura, doble: document.getElementById("qDouble").checked,
+        base, ...parts, builtInExtras, customTotal, subtotal, merma, costoConMerma, margen, precioSugerido, precioFinal, issues};
+    }
+
+    function renderQuoteSummary() {
+      const c = calcQuote();
+      if (c.issues.length) {
+        document.getElementById("quoteSummary").innerHTML = '<div class="notice" role="status">Falta completar:<ul>' + c.issues.map(issue => '<li>' + esc(issue) + '</li>').join('') + '</ul></div>';
+        renderQuoteExtras();
+        return;
+      }
+      const rows = [
+        ["Figura", c.figura],
+        ["Altura", c.doble ? "Doble" : "Normal"],
+        ["Tamaño", c.size],
+        ["Otros costos de producción", fmt(c.base)],
+        ["Pan", c.pan.label + (c.pan.cost ? " +" + fmt(c.pan.cost) : "")],
+        ["Consistencia", c.consistencia.label + (c.consistencia.cost ? " +" + fmt(c.consistencia.cost) : "")],
+        ["Relleno", c.relleno.label + (c.relleno.cost ? " +" + fmt(c.relleno.cost) : "")],
+        ["Betún", c.betun.label + (c.betun.cost ? " +" + fmt(c.betun.cost) : "")],
+        ["Diseño", c.diseno.label + (c.diseno.cost ? " +" + fmt(c.diseno.cost) : "")],
+        ["Pan, relleno, betún y complementos", fmt(c.builtInExtras)],
+        ["Extras personalizados", fmt(c.customTotal)],
+        ["Subtotal", fmt(c.subtotal)],
+        ["Merma (" + c.merma + "%)", fmt(c.costoConMerma - c.subtotal)],
+        ["Costo con merma", fmt(c.costoConMerma)],
+        ["Utilidad sobre precio (" + c.margen + "%)", fmt(c.precioSugerido - c.costoConMerma)],
+        ["Precio sugerido", fmt(c.precioSugerido)],
+        ["Precio final", fmt(c.precioFinal)]
+      ];
+
+      document.getElementById("quoteSummary").innerHTML = rows
+        .map(function (row, index) {
+          const isTotal = index >= rows.length - 2;
+          return `
+            <div class="summary-row ${isTotal ? "total" : ""}">
+              <span>${esc(row[0])}</span>
+              <span>${esc(row[1])}</span>
+            </div>
+          `;
+        })
+        .join("");
+
+      renderQuoteExtras();
+    }
+
+    function renderQuoteExtras() {
+      const el = document.getElementById("quoteExtrasList");
+
+      if (!quoteExtras.length) {
+        el.innerHTML = '<div class="muted">Sin extras personalizados.</div>';
+        return;
+      }
+
+      el.innerHTML = quoteExtras
+        .map(function (item, idx) {
+          return `
+            <div class="summary-row">
+              <span>${esc(item.name)}</span>
+              <span>
+                ${fmt(item.cost)}
+                <button class="small-btn danger-small" onclick="removeQuoteExtra(${idx})">x</button>
+              </span>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function addQuoteExtra() {
+      const name = val("quoteExtraName").trim();
+      const issues = [];
+      const cost = inputNumber("quoteExtraCost", issues, "Costo extra");
+      if (issues.length) { alert(issues.join("\n")); return; }
+
+      if (!name) {
+        alert("Escribe el nombre del extra.");
+        return;
+      }
+
+      quoteExtras.push({ name: name, cost: cost });
+
+      document.getElementById("quoteExtraName").value = "";
+      document.getElementById("quoteExtraCost").value = "";
+
+      renderQuoteSummary();
+    }
+
+    function removeQuoteExtra(index) {
+      quoteExtras.splice(index, 1);
+      renderQuoteSummary();
+    }
+
+    function getQuotePayload() {
+      const c = calcQuote();
+      if (c.issues.length) { alert(c.issues.join("\n")); return null; }
+
+      return {
+        id: uid(),
+        createdAt: new Date().toLocaleString("es-MX"),
+        cliente: val("qCliente").trim() || "Cliente",
+        notas: val("qNotas").trim(),
+
+        size: c.size,
+        figura: c.figura, doble: c.doble,
+        components: readComponents(),
+        base: c.base,
+
+        pan: c.pan.label,
+        panCost: c.pan.cost,
+
+        consistencia: c.consistencia.label,
+        consistenciaCost: c.consistencia.cost,
+
+        relleno: c.relleno.label,
+        rellenoCost: c.relleno.cost,
+
+        betun: c.betun.label,
+        betunCost: c.betun.cost,
+
+        diseno: c.diseno.label,
+        disenoCost: c.diseno.cost,
+
+        merma: c.merma,
+        margen: c.margen,
+        round: document.getElementById("qRound").checked,
+
+        customExtras: quoteExtras.map(item => ({...item})),
+
+        subtotal: c.subtotal,
+        costoConMerma: c.costoConMerma,
+        precioSugerido: c.precioSugerido,
+        precioFinal: c.precioFinal
+      };
+    }
+
+    function saveQuote(createOrder) {
+      const q = getQuotePayload();
+      if (!q) return;
+
+      db.quotes.unshift(q);
+
+      if (createOrder) {
+        addOrderFromQuote(q, false);
+      }
+
+      if (!saveDB()) {
+        db.quotes.shift();
+        if (createOrder) db.orders.shift();
+        return;
+      }
+      renderQuotes();
+      renderOrders();
+
+      alert("Cotización guardada.");
+    }
+
+    function renderQuotes() {
+      const el = document.getElementById("quotesList");
+
+      if (!db.quotes.length) {
+        el.innerHTML = '<div class="muted">Todavía no hay cotizaciones guardadas.</div>';
+        return;
+      }
+
+      el.innerHTML = db.quotes
+        .map(function (q) {
+          return `
+            <div class="quote-item">
+              <div class="item-top">
+                <span>${esc(q.cliente)}</span>
+                <span>${fmt(q.precioFinal)}</span>
+              </div>
+
+              <div class="muted">
+                ${esc(q.createdAt)} · ${esc(q.size)} ${q.doble ? "doble" : ""} · ${esc(q.figura || "")} · ${esc(q.pan)} / ${esc(q.relleno)} / ${esc(q.betun)}
+              </div>
+
+              ${q.notas ? `<div class="muted">${esc(q.notas)}</div>` : ""}
+
+              <div class="actions">
+                <button class="small-btn" onclick="loadQuote(${q.id})">Abrir</button>
+                <button class="small-btn" onclick="shareQuote(${q.id})">WhatsApp</button>
+                <button class="small-btn" onclick="quoteToOrder(${q.id})">Pedido</button>
+                <button class="small-btn danger-small" onclick="deleteQuote(${q.id})">Eliminar</button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function loadQuote(id) {
+      const q = db.quotes.find(function (item) {
+        return item.id === id;
+      });
+
+      if (!q) return;
+
+      document.getElementById("qCliente").value = q.cliente || "";
+      document.getElementById("qNotas").value = q.notas || "";
+
+      fillSizeSelect(q.size);
+      document.getElementById("qDouble").checked = !!q.doble;
+      document.getElementById("qFigura").value = ["Redondo", "Corazón", "Cuadrado"].includes(q.figura) ? q.figura : "Otro";
+      document.getElementById("qFiguraOtra").value = q.figura || "Redondo";
+      document.getElementById("qBase").value = q.base;
+
+      fillQuoteSelect("qPan", "Pan", q.pan);
+      fillQuoteSelect("qConsistencia", "Consistencia", q.consistencia);
+      fillQuoteSelect("qRelleno", "Relleno", q.relleno);
+      fillQuoteSelect("qBetun", "Betún", q.betun);
+      fillQuoteSelect("qDiseno", "Diseño", q.diseno);
+      renderComponents(q.components || {});
+
+      document.getElementById("qMerma").value = q.merma;
+      document.getElementById("qMargen").value = q.margen;
+      document.getElementById("qRound").checked = !!q.round;
+
+      quoteExtras = (q.customExtras || []).map(item => ({...item}));
+      document.getElementById("presetStatus").textContent = "Al abrir, se calcula con precios actuales. El importe original permanece en la cotización guardada.";
+
+      renderQuoteSummary();
+      showTab("cotizar");
+    }
+
+    function deleteQuote(id) {
+      if (!confirm("¿Eliminar esta cotización?")) return;
+
+      db.quotes = db.quotes.filter(function (q) {
+        return q.id !== id;
+      });
+
+      saveDB();
+      renderQuotes();
+    }
+
+    function buildQuoteMessage(q) {
+      const lines = [
+        "Cotización para " + q.cliente,
+        "Fecha: " + q.createdAt,
+        "Pastel: " + q.size,
+        "Figura: " + (q.figura || "Sin especificar"),
+        "Altura: " + (q.doble ? "Doble" : "Normal"),
+        "Pan: " + q.pan,
+        "Consistencia: " + q.consistencia,
+        "Relleno: " + q.relleno,
+        "Betún: " + q.betun,
+        "Diseño: " + q.diseno
+      ];
+
+      if (q.customExtras && q.customExtras.length) {
+        lines.push(
+          "Extras: " +
+            q.customExtras
+              .map(function (e) {
+                return e.name + " " + fmt(e.cost);
+              })
+              .join(", ")
+        );
+      }
+
+      lines.push("Precio final: " + fmt(q.precioFinal));
+
+      if (q.notas) {
+        lines.push("Notas: " + q.notas);
+      }
+
+      return lines.join("\n");
+    }
+
+    function openWhatsApp(text) {
+      window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener,noreferrer");
+    }
+
+    function shareCurrentQuote() {
+      const q = getQuotePayload();
+      if (!q) return;
+      openWhatsApp(buildQuoteMessage(q));
+    }
+
+    function shareQuote(id) {
+      const q = db.quotes.find(function (item) {
+        return item.id === id;
+      });
+
+      if (!q) return;
+
+      openWhatsApp(buildQuoteMessage(q));
+    }
+
+    function clearQuote() {
+      if (!confirm("¿Limpiar formulario?")) return;
+
+      document.getElementById("qCliente").value = "";
+      document.getElementById("qNotas").value = "";
+
+      quoteExtras = [];
+
+      fillSizeSelect("22 cm");
+      fillQuoteSelect("qPan", "Pan", "Vainilla");
+      fillQuoteSelect("qConsistencia", "Consistencia", "Tres leches");
+      fillQuoteSelect("qRelleno", "Relleno", "Nuez");
+      fillQuoteSelect("qBetun", "Betún", "Chantilly");
+      fillQuoteSelect("qDiseno", "Diseño", "Sencillo");
+
+      renderComponents({});
+      document.getElementById("qDouble").checked = false;
+      document.getElementById("qFigura").value = "Redondo";
+      document.getElementById("qFiguraOtra").value = "";
+      applySettingsToQuoteForm();
+      setBaseFromSize();
+      renderQuoteSummary();
+    }
+
+    /* ============================= */
+    /* PEDIDOS                       */
+    /* ============================= */
+
+    function addOrderFromQuote(q, render) {
+      db.orders.unshift({
+        id: uid(),
+        name: q.cliente || "Cliente",
+        cost: q.precioFinal,
+        date: new Date().toISOString().slice(0, 10),
+        time: new Date().toTimeString().slice(0, 5),
+        product: q.size + " " + q.pan + " / " + q.relleno + " / " + q.betun,
+        pan: q.pan,
+        betun: q.betun,
+        status: "Pendiente",
+        figura: q.figura, doble: q.doble,
+        notes: [q.figura, q.doble ? "Doble" : "", q.notas].filter(Boolean).join(" · ")
+      });
+
+      if (render !== false) {
+        saveDB();
+        renderOrders();
+      }
+    }
+
+    function quoteToOrder(id) {
+      const q = db.quotes.find(function (item) {
+        return item.id === id;
+      });
+
+      if (!q) return;
+
+      addOrderFromQuote(q, true);
+      alert("Pedido creado desde la cotización.");
+    }
+
+    function addOrder() {
+      const name = val("orderName").trim();
+      const product = val("orderProduct").trim();
+      const cost = numVal("orderCost");
+
+      if (!name || !product) {
+        alert("Escribe nombre y producto.");
+        return;
+      }
+
+      db.orders.unshift({
+        id: uid(),
+        name: name,
+        product: product,
+        cost: cost,
+        date: val("orderDate"),
+        time: val("orderTime"),
+        pan: val("orderPan").trim(),
+        betun: val("orderBetun").trim(),
+        status: val("orderStatus"),
+        notes: val("orderNotes").trim()
+      });
+
+      saveDB();
+      renderOrders();
+      clearOrderForm();
+    }
+
+    function clearOrderForm() {
+      document.getElementById("orderName").value = "";
+      document.getElementById("orderProduct").value = "";
+      document.getElementById("orderCost").value = "";
+      document.getElementById("orderPan").value = "";
+      document.getElementById("orderBetun").value = "";
+      document.getElementById("orderNotes").value = "";
+      document.getElementById("orderStatus").value = "Pendiente";
+      document.getElementById("orderDate").value = new Date().toISOString().slice(0, 10);
+      document.getElementById("orderTime").value = "";
+    }
+
+    function statusOptions(status) {
+      return ["Pendiente", "Producción", "Entregado"]
+        .map(function (s) {
+          return `<option value="${s}" ${status === s ? "selected" : ""}>${s}</option>`;
+        })
+        .join("");
+    }
+
+    function renderOrders() {
+      const list = document.getElementById("ordersList");
+      const summary = document.getElementById("ordersSummary");
+
+      const total = db.orders.reduce(function (sum, o) {
+        return sum + Number(o.cost || 0);
+      }, 0);
+
+      const pendiente = db.orders
+        .filter(function (o) {
+          return o.status !== "Entregado";
+        })
+        .reduce(function (sum, o) {
+          return sum + Number(o.cost || 0);
+        }, 0);
+
+      summary.innerHTML = `
+        <div class="summary-row">
+          <span>Total pedidos</span>
+          <span>${fmt(total)}</span>
+        </div>
+        <div class="summary-row">
+          <span>Pendiente / producción</span>
+          <span>${fmt(pendiente)}</span>
+        </div>
+      `;
+
+      if (!db.orders.length) {
+        list.innerHTML = '<div class="muted">No hay pedidos.</div>';
+        return;
+      }
+
+      list.innerHTML = db.orders
+        .map(function (o) {
+          return `
+            <div class="order-item">
+              <div class="item-top">
+                <span>${esc(o.name)}</span>
+                <span>${fmt(o.cost)}</span>
+              </div>
+
+              <div class="muted">
+                ${esc(o.date || "")} ${o.time ? "· " + esc(o.time) : ""} · ${esc(o.product)}
+              </div>
+
+              <div class="muted">
+                ${o.pan ? "Pan: " + esc(o.pan) + " · " : ""}${o.betun ? "Betún: " + esc(o.betun) : ""}
+              </div>
+
+              ${o.notes ? `<div class="muted">${esc(o.notes)}</div>` : ""}
+
+              <div class="actions">
+                <select onchange="updateOrderStatus(${o.id}, this.value)">
+                  ${statusOptions(o.status)}
+                </select>
+
+                <button class="small-btn danger-small" onclick="deleteOrder(${o.id})">Eliminar</button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function updateOrderStatus(id, status) {
+      const o = db.orders.find(function (item) {
+        return item.id === id;
+      });
+
+      if (!o) return;
+
+      o.status = status;
+      saveDB();
+      renderOrders();
+    }
+
+    function deleteOrder(id) {
+      if (!confirm("¿Eliminar este pedido?")) return;
+
+      db.orders = db.orders.filter(function (o) {
+        return o.id !== id;
+      });
+
+      saveDB();
+      renderOrders();
+    }
+
+    /* ============================= */
+    /* RECETAS                       */
+    /* ============================= */
+
+    function renderRecipeInsumoSelect() {
+      const el = document.getElementById("recipeInsumo");
+
+      el.innerHTML = db.insumos
+        .map(function (ins, i) {
+          return `<option value="${i}">${esc(ins.n)} (${esc(ins.p ?? "?")} ${esc(ins.u || "u")})</option>`;
+        })
+        .join("");
+    }
+
+    function addRecipeIngredient() {
+      const idx = Number(val("recipeInsumo")) || 0;
+      const ins = db.insumos[idx];
+
+      if (!ins) {
+        alert("Selecciona un insumo.");
+        return;
+      }
+
+      const qty = numVal("recipeQty");
+
+      if (!Number.isFinite(qty) || qty <= 0) {
+        alert("Escribe la cantidad.");
+        return;
+      }
+
+      const unit = val("recipeUnit").trim() || ins.u || "";
+      const cost = unitCost(ins);
+      const errors = [];
+      const factor = unitKey(unit) === unitKey(ins.u) ? 1 : null;
+      if (factor === null) { alert("Usa la unidad del insumo. Las conversiones se configuran en el recetario."); return; }
+      const total = ingredientCost({insumoId: ins.id, qty, factor}, errors);
+
+      recipeIngredients.push({
+        insumoId: ins.id, factor: 1,
+        i: ins.n,
+        qty: qty,
+        u: unit,
+        cost: cost,
+        total: total
+      });
+
+      document.getElementById("recipeQty").value = "";
+      document.getElementById("recipeUnit").value = "";
+      document.getElementById("recipeUnitCost").value = "";
+
+      renderRecipeIngredients();
+    }
+
+    function removeRecipeIngredient(index) {
+      recipeIngredients.splice(index, 1);
+      renderRecipeIngredients();
+    }
+
+    function renderRecipeIngredients() {
+      const el = document.getElementById("recipeIngredientsList");
+
+      if (!recipeIngredients.length) {
+        el.innerHTML = '<div class="muted">Sin ingredientes agregados.</div>';
+        return;
+      }
+
+      const total = recipeIngredients.reduce(function (sum, item) {
+        return sum + Number(item.total || 0);
+      }, 0);
+
+      el.innerHTML =
+        recipeIngredients
+          .map(function (item, idx) {
+            return `
+              <div class="summary-row">
+                <span>${esc(item.i)} · ${item.qty} ${esc(item.u)}</span>
+                <span>
+                  ${item.total === null ? "Precio pendiente" : fmt(item.total)}
+                  <button class="small-btn danger-small" onclick="removeRecipeIngredient(${idx})">x</button>
+                </span>
+              </div>
+            `;
+          })
+          .join("") +
+        `
+          <div class="summary-row total">
+            <span>Total ingredientes</span>
+            <span>${fmt(total)}</span>
+          </div>
+        `;
+    }
+
+    function saveRecipe() {
+      const name = val("recipeName").trim();
+
+      if (!name) {
+        alert("Escribe el nombre de la receta.");
+        return;
+      }
+
+      if (!recipeIngredients.length) {
+        alert("Agrega al menos un ingrediente.");
+        return;
+      }
+
+      const total = recipeIngredients.reduce(function (sum, item) {
+        return sum + Number(item.total || 0);
+      }, 0);
+
+      db.recipes.unshift({
+        id: uid(),
+        name: name,
+        yield: val("recipeYield").trim(),
+        notes: val("recipeNotes").trim(),
+        ingredients: recipeIngredients.slice(),
+        total: total,
+        unit: null
+      });
+
+      saveDB();
+
+      recipeIngredients = [];
+
+      document.getElementById("recipeName").value = "";
+      document.getElementById("recipeYield").value = "";
+      document.getElementById("recipeNotes").value = "";
+
+      renderRecipeIngredients();
+      refreshCosts();
+
+      alert("Receta guardada.");
+    }
+
+    function renderRecipes() {
+      document.getElementById("recipesList").innerHTML = db.recipes.map((r, ri) => {
+        const result = recipeCost(r);
+        return `<details class="recipe-card"><summary>${esc(r.name)} · ${result.issues.length ? "Costo pendiente" : fmt(result.total)}</summary>
+          <p class="muted">Rendimiento: ${esc(r.yieldText || r.yield || "No especificado")}${r.notes ? "<br>" + esc(r.notes) : ""}</p>
+          <details><summary>Asignar esta receta a un sabor</summary><label for="use-${ri}">Usar esta receta para cotizar</label>
+          <select id="use-${ri}" onchange="updateRecipeUse(${ri})"><option value="">Según el nombre de la receta</option>${COMPONENTS.map(([key,cat]) => `<optgroup label="${cat}">${quoteOptions(cat).filter(o => !["Normal","Sin relleno","Sencillo"].includes(o.label)).map(o => `<option value="${esc(key + ":" + o.label)}" ${r.useFor === key + ":" + o.label ? "selected" : ""}>${cat}: ${esc(o.label)}</option>`).join('')}</optgroup>`).join('')}</select></details>
+          ${(r.ingredients || []).map((ing, ii) => {
+            const issues = [];
+            const cost = ingredientCost(ing, issues);
+            const supplies = ingredientSupplies(ing.i);
+            const supply = supplies.find(s => s.id === ing.insumoId);
+            const sameUnit = supply && unitKey(supply.u) === unitKey(ing.u) && ing.factor === 1;
+            return `<div class="card">
+              <b>${esc(ing.i)}</b> · ${esc(ing.qtyText ?? ing.qty ?? "Cantidad pendiente")} ${esc(ing.u)}
+              ${typeof ing.qtyText === "string" && ing.qtyText.startsWith("=") ? `<div class="muted">Cantidad calculada: ${esc(ing.qty)}</div>` : ""}
+              <label for="bind-${ri}-${ii}">Presentación de ${esc(ing.i)}</label>
+              <select id="bind-${ri}-${ii}" onchange="updateBinding(${ri},${ii})"><option value="">Seleccionar presentación</option>${supplies.map(s => `<option value="${esc(s.id)}" ${s.id === ing.insumoId ? "selected" : ""}>${esc(s.n)} · ${esc(s.p ?? "?")} ${esc(s.u)}</option>`).join('')}</select>
+              ${supplies.length ? "" : `<p class="muted">Agrega ${esc(ing.i)} en Insumos para capturar su precio.</p>`}
+              ${sameUnit ? `<input id="factor-${ri}-${ii}" type="hidden" value="1" />` : `<details><summary>Conversión de unidades</summary><label for="factor-${ri}-${ii}">Por cada 1 ${esc(ing.u || "unidad de receta")}, ¿cuántos ${esc(supply?.u || "unidades del insumo")} usas?</label><input id="factor-${ri}-${ii}" type="number" min="0" step="any" value="${esc(ing.factor ?? "")}" onchange="updateBinding(${ri},${ii})" /></details>`}
+              ${ing.qty === null ? `<label for="qty-${ri}-${ii}">Cantidad para costear (vacía en Excel)</label><input id="qty-${ri}-${ii}" type="number" min="0" step="any" value="${esc(ing.costingQty ?? "")}" onchange="updateBinding(${ri},${ii})" />` : ""}
+              <p class="muted">${issues.length ? esc(issues.join(" · ")) : "Costo: " + fmt(cost)}</p>
+            </div>`;
+          }).join('')}
+          <button class="small-btn danger-small" onclick="deleteRecipe(${r.id})">Eliminar receta</button>
+        </details>`;
+      }).join('') || '<p class="muted">No hay recetas.</p>';
+    }
+
+    function deleteRecipe(id) {
+      if (!confirm("¿Eliminar esta receta?")) return;
+
+      db.recipes = db.recipes.filter(function (r) {
+        return r.id !== id;
+      });
+
+      saveDB();
+      refreshCosts();
+    }
+
+    /* ============================= */
+    /* INSUMOS                       */
+    /* ============================= */
+
+    function addInsumo() {
+      const name = val("insumoName").trim();
+      const p = Number(val("insumoPresentation"));
+      const u = val("insumoUm").trim();
+      const price = val("insumoPrice") === "" ? null : Number(val("insumoPrice"));
+      if (!name || !u || !Number.isFinite(p) || p <= 0 || (price !== null && (!Number.isFinite(price) || price < 0))) {
+        alert("Escribe nombre, unidad y una presentación mayor a 0. El precio debe ser positivo, cero o quedar pendiente."); return;
+      }
+      db.insumos.push({id: "ins-" + uid(), n: name, p, u, pr: price});
+      if (!saveDB()) { db.insumos.pop(); return; }
+      ["insumoName", "insumoPresentation", "insumoUm", "insumoPrice"].forEach(id => document.getElementById(id).value = "");
+      refreshCosts();
+    }
+
+    function renderInsumos() {
+      const search = val("insumoSearch").toLowerCase();
+      document.getElementById("insumosList").innerHTML = db.insumos.map((ins, index) => {
+        if (!ins.n.toLowerCase().includes(search)) return "";
+        const cost = unitCost(ins);
+        return `<div class="card"><b>${esc(ins.n)}</b>
+          <div class="grid">
+            <div><label for="price-${index}">Precio de compra ($)</label><input id="price-${index}" type="number" min="0" step="any" value="${esc(ins.pr ?? "")}" placeholder="Pendiente" /></div>
+            <div><label for="pack-${index}">Cantidad en la presentación</label><input id="pack-${index}" type="number" min="0" step="any" value="${esc(ins.p ?? "")}" /></div>
+          </div>
+          <label for="unit-${index}">Unidad (gr, ml, ea…)</label><input id="unit-${index}" value="${esc(ins.u)}" />
+          <p class="muted">${cost === null ? "Precio o presentación pendiente" : "$" + cost.toLocaleString("es-MX", {maximumFractionDigits: 6}) + "/" + esc(ins.u)}</p>
+          <div class="actions"><button class="small-btn" onclick="updateInsumo(${index})">Guardar precio y presentación</button><button class="small-btn danger-small" onclick="deleteInsumo(${index})">Eliminar</button></div>
+        </div>`;
+      }).join('') || '<p class="muted">No se encontraron insumos.</p>';
+    }
+
+    function deleteInsumo(index) {
+      if (!confirm("¿Eliminar este insumo?")) return;
+
+      if (db.recipes.some(r => r.ingredients.some(i => i.insumoId === db.insumos[index].id))) {
+        alert("Este insumo se usa en una receta. Cambia primero su relación en el recetario."); return;
+      }
+      db.insumos.splice(index, 1);
+
+      saveDB();
+      renderInsumos();
+      renderRecipeInsumoSelect();
+    }
+
+    /* ============================= */
+    /* TAMAÑOS Y EXTRAS              */
+    /* ============================= */
+
+    function addSize() {
+      const label = val("sizeLabel").trim();
+      const issues = [];
+      const base = inputNumber("sizeBase", issues, "Otros costos");
+      if (issues.length) { alert(issues.join("\n")); return; }
+
+      if (!label) {
+        alert("Escribe el tamaño.");
+        return;
+      }
+
+      db.sizes.push({ label: label, base: base });
+
+      saveDB();
+
+      document.getElementById("sizeLabel").value = "";
+      document.getElementById("sizeBase").value = "";
+
+      renderSizes();
+      renderCotizadorSelects();
+    }
+
+    function renderSizes() {
+      const el = document.getElementById("sizesList");
+
+      if (!db.sizes.length) {
+        el.innerHTML = '<div class="muted">No hay tamaños.</div>';
+        return;
+      }
+
+      el.innerHTML = db.sizes
+        .map(function (s, index) {
+          return `
+            <div class="list-row">
+              <span>${esc(s.label)}</span>
+              <span>
+                ${fmt(s.base)}
+                <button class="small-btn danger-small" onclick="deleteSize(${index})">x</button>
+              </span>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function deleteSize(index) {
+      if (db.sizes.length <= 1) {
+        alert("Debe existir al menos un tamaño.");
+        return;
+      }
+
+      if (!confirm("¿Eliminar este tamaño?")) return;
+
+      db.sizes.splice(index, 1);
+
+      saveDB();
+      renderSizes();
+      renderCotizadorSelects();
+    }
+
+    function addExtra() {
+      const cat = val("extraCat");
+      const option = val("extraOption").trim();
+      const issues = [];
+      const cost = inputNumber("extraCost", issues, "Costo extra");
+      if (issues.length) { alert(issues.join("\n")); return; }
+
+      if (!option) {
+        alert("Escribe la opción de extra.");
+        return;
+      }
+
+      db.extras.push({
+        cat: cat,
+        option: option,
+        cost: cost
+      });
+
+      saveDB();
+
+      document.getElementById("extraOption").value = "";
+      document.getElementById("extraCost").value = "";
+
+      renderExtras();
+      renderCotizadorSelects();
+    }
+
+    function renderExtras() {
+      const el = document.getElementById("extrasList");
+
+      if (!db.extras.length) {
+        el.innerHTML = '<div class="muted">No hay extras.</div>';
+        return;
+      }
+
+      el.innerHTML = db.extras
+        .map(function (e, index) {
+          return `
+            <div class="list-row">
+              <span>
+                <b>${esc(e.cat)}</b><br>
+                ${esc(e.option)}
+              </span>
+
+              <span>
+                ${fmt(e.cost)}
+                <button class="small-btn danger-small" onclick="deleteExtra(${index})">x</button>
+              </span>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function deleteExtra(index) {
+      if (!confirm("¿Eliminar este extra?")) return;
+
+      db.extras.splice(index, 1);
+
+      saveDB();
+      renderExtras();
+      renderCotizadorSelects();
+    }
+
+    /* ============================= */
+    /* VENTAS                        */
+    /* ============================= */
+
+    function addSale() {
+      const concept = val("saleConcept").trim();
+      const amount = numVal("saleAmount");
+      const month = val("saleMonth").trim() || "GENERAL";
+
+      if (!concept) {
+        alert("Escribe el concepto de la venta.");
+        return;
+      }
+
+      db.sales.unshift({
+        id: uid(),
+        month: month,
+        concept: concept,
+        amount: amount
+      });
+
+      saveDB();
+
+      document.getElementById("saleConcept").value = "";
+      document.getElementById("saleAmount").value = "";
+
+      renderSales();
+    }
+
+    function renderSales() {
+      const list = document.getElementById("salesList");
+      const summary = document.getElementById("salesSummary");
+
+      const total = db.sales.reduce(function (sum, s) {
+        return sum + Number(s.amount || 0);
+      }, 0);
+
+      summary.innerHTML = `
+        <div class="summary-row total">
+          <span>Total ventas</span>
+          <span>${fmt(total)}</span>
+        </div>
+      `;
+
+      if (!db.sales.length) {
+        list.innerHTML = '<div class="muted">No hay ventas registradas.</div>';
+        return;
+      }
+
+      list.innerHTML = db.sales
+        .map(function (s) {
+          return `
+            <div class="sale-item">
+              <div class="item-top">
+                <span>${esc(s.concept)}</span>
+                <span>${fmt(s.amount)}</span>
+              </div>
+
+              <div class="muted">${esc(s.month)}</div>
+
+              <div class="actions">
+                <button class="small-btn danger-small" onclick="deleteSale(${s.id})">Eliminar</button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function deleteSale(id) {
+      if (!confirm("¿Eliminar esta venta?")) return;
+
+      db.sales = db.sales.filter(function (s) {
+        return s.id !== id;
+      });
+
+      saveDB();
+      renderSales();
+    }
+
+    /* ============================= */
+    /* RESPALDO                      */
+    /* ============================= */
+
+    function exportData() {
+      const blob = new Blob([storageBlocked ? localStorage.getItem(DB_KEY) : JSON.stringify(db, null, 2)], {
+        type: "application/json"
+      });
+
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "mcm_pasteleria_respaldo.json";
+      a.click();
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          const previous = db;
+          const candidate = prepareDB(parsed);
+          if (!confirm("Importar reemplazará los datos actuales. Exporta un respaldo si necesitas conservarlos. ¿Continuar?")) return;
+          const wasBlocked = storageBlocked;
+          storageBlocked = false;
+          db = candidate;
+          if (!saveDB()) { db = previous; storageBlocked = wasBlocked; return; }
+          renderAll();
+          applySettingsToQuoteForm();
+
+          alert("Datos importados correctamente.");
+        } catch (err) {
+          alert("Archivo inválido.");
+        }
+      };
+
+      reader.onerror = function () { alert("No se pudo leer el respaldo. Los datos actuales se conservan."); };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function resetData() {
+      if (!confirm("Esto borrará los datos guardados en este navegador y regresará a los datos iniciales. ¿Continuar?")) {
+        return;
+      }
+
+      localStorage.removeItem(DB_KEY);
+      location.reload();
+    }
+
+    /* ============================= */
+    /* RENDER GENERAL E INIT         */
+    /* ============================= */
+
+    function renderAll() {
+      renderQuoteSupply();
+      renderSettings();
+      renderSizes();
+      renderExtras();
+      renderCotizadorSelects();
+      renderComponents();
+      renderQuotes();
+      renderOrders();
+      renderRecipes();
+      renderInsumos();
+      renderSales();
+      renderRecipeInsumoSelect();
+      renderRecipeIngredients();
+      renderQuoteSummary();
+    }
+
+    function init() {
+      db = loadDB();
+
+      applySettingsToQuoteForm();
+      renderAll();
+      applyQuotePreset();
+      renderQuoteSummary();
+
+      const orderDate = document.getElementById("orderDate");
+      if (orderDate && !orderDate.value) {
+        orderDate.value = new Date().toISOString().slice(0, 10);
+      }
+    }
+
+    const COMPONENTS = [
+      ["pan", "Pan", "qPan"], ["relleno", "Relleno", "qRelleno"],
+      ["betun", "Betún", "qBetun"], ["consistencia", "Consistencia", "qConsistencia"],
+      ["diseno", "Diseño", "qDiseno"]
+    ];
+
+    function normalizedName(name) {
+      return String(name || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
+    }
+
+    function ingredientFamily(name) {
+      const n = normalizedName(name);
+      const aliases = {
+        "vainilla": "escencia vainilla", "escencia": "escencia vainilla", "esencia vainilla": "escencia vainilla",
+        "harina pee": "harina extra esponja", "harina pz": "harina zanahoria",
+        "harina eh": "harina preparada", "harina": "harina alta proteina",
+        "chispas": "chispas de chocolate", "chocolate/ chispas": "chispas de chocolate",
+        "crema acida": "crema acida lala", "base galleta": "base pay",
+        "a refinada": "azucar refinada", "azucar": "azucar refinada",
+        "polvo p hornear": "rexal", "pumpkin": "pumpink", "chantillly": "chantilly"
+      };
+      if (n.startsWith("mantequilla")) return "mantequilla";
+      if (n.startsWith("cocoa")) return "cocoa";
+      if (n.startsWith("harina redvelvet")) return "harina extra esponja";
+      if (n.startsWith("harina creamy cake")) return "harina preparada";
+      return aliases[n] || n;
+    }
+
+    function ingredientSupplies(name) {
+      return db.insumos.filter(s => ingredientFamily(s.n) === ingredientFamily(name));
+    }
+
+    function componentChoices(key, label) {
+      if (key === "relleno" && label === "Betún") return componentChoices("betun", selectedQuoteOption("Betún", "qBetun").label);
+      // ponytail: Name matching only covers named flavors; useFor assigns recipes with generic names explicitly.
+      const recipes = db.recipes.filter(r => {
+        if (r.useFor) return r.useFor === key + ":" + label;
+        const name = normalizedName(r.name);
+        const flavor = normalizedName(label);
+        if (key === "pan") return /\b(bizcocho|pastel|pan)\b/.test(name) && name.includes(flavor);
+        if (key === "betun") return /betun|glaseado/.test(name) && name.includes(flavor);
+        if (key === "relleno" && label === "Pay") return name.startsWith("pay ");
+        if (key === "relleno" && label === "Cheescake") return /cheescake|cheesecake/.test(name);
+        return false;
+      });
+      const ingredient = ({relleno: {Nuez: "Nuez", Mermelada: "Mermelada", "Crema de avellana": "Nutella"},
+        betun: {Chantilly: "Chantilly"}, consistencia: {"Tres leches": "3 leches"}})[key]?.[label];
+      const supplies = ingredient ? ingredientSupplies(ingredient) : [];
+      return [...recipes.map((r,i) => ({source: "r-" + r.id, label: r.name + (recipes.filter(other => other.name === r.name).length > 1 ? " · variante " + (i+1) : "")})),
+        ...supplies.map(s => ({source: "i-" + s.id, label: s.n + " · " + (s.p ?? "?") + " " + s.u}))];
+    }
+
+    function updateRecipeUse(index) {
+      const old = db.recipes[index].useFor;
+      db.recipes[index].useFor = val("use-" + index);
+      if (!saveDB()) { db.recipes[index].useFor = old; return; }
+      renderComponents();
+      renderQuoteSummary();
+    }
+
+    function unitKey(unit) {
+      const key = String(unit || "").trim().toLowerCase();
+      return ({g: "gr", kg: "kg", pieza: "ea", piezas: "ea", l: "l"})[key] || key;
+    }
+
+    function unitCost(ins) {
+      return ins && typeof ins.pr === "number" && Number.isFinite(ins.pr) && ins.pr >= 0 &&
+        Number.isFinite(Number(ins.p)) && Number(ins.p) > 0 && ins.u ? ins.pr / Number(ins.p) : null;
+    }
+
+    function ingredientCost(ing, issues) {
+      const supply = db.insumos.find(s => s.id === ing.insumoId);
+      const compatible = !supply || ingredientSupplies(ing.i).some(s => s.id === supply.id);
+      const qty = ing.qty ?? ing.costingQty;
+      const cost = unitCost(supply);
+      if (!supply) issues.push(ing.i + ": selecciona un insumo.");
+      else if (!compatible) issues.push(ing.i + ": selecciona una presentación de este ingrediente.");
+      else if (cost === null) issues.push(ing.i + ": captura precio y presentación en Insumos.");
+      if (typeof qty !== "number" || !Number.isFinite(qty) || qty < 0) issues.push(ing.i + ": falta cantidad.");
+      if (typeof ing.factor !== "number" || !Number.isFinite(ing.factor) || ing.factor <= 0) issues.push(ing.i + ": confirma conversión de unidades.");
+      return compatible && cost !== null && typeof qty === "number" && Number.isFinite(qty) && qty >= 0 &&
+        typeof ing.factor === "number" && Number.isFinite(ing.factor) && ing.factor > 0 ? qty * ing.factor * cost : null;
+    }
+
+    function recipeCost(recipe) {
+      const issues = [];
+      if (!recipe.ingredients.length) issues.push("La receta no tiene ingredientes.");
+      const total = recipe.ingredients.reduce((sum, ing) => sum + (ingredientCost(ing, issues) ?? 0), 0);
+      return {total: issues.length ? null : total, issues};
+    }
+
+    function inputNumber(id, issues, label) {
+      const value = val(id).trim();
+      const number = Number(value);
+      if (value === "" || !Number.isFinite(number) || number < 0) {
+        issues.push(label + ": escribe un número mayor o igual a 0.");
+        return 0;
+      }
+      return number;
+    }
+
+    function readComponents() {
+      return Object.fromEntries(COMPONENTS.map(([key]) => [key, {source: val("component-" + key), qty: val("amount-" + key)}]));
+    }
+
+    function presetKey() {
+      return JSON.stringify([selectedSize().label, val("qFigura"), val("qFigura") === "Otro" ? val("qFiguraOtra").trim() : "",
+        ...COMPONENTS.map(([,cat,id]) => selectedQuoteOption(cat,id).label)]);
+    }
+
+    function saveQuotePreset() {
+      const quote = getQuotePayload();
+      if (!quote) return;
+      const key = presetKey();
+      const previous = db.quotePresets[key];
+      db.quotePresets[key] = {components: readComponents(), base: quote.base};
+      if (!saveDB()) {
+        if (previous) db.quotePresets[key] = previous;
+        else delete db.quotePresets[key];
+        return;
+      }
+      document.getElementById("presetStatus").textContent = "Cantidades guardadas para este tamaño, figura y sabores. Los costos se actualizarán con los precios de Insumos.";
+    }
+
+    function applyQuotePreset() {
+      const preset = db.quotePresets[presetKey()];
+      renderComponents(preset?.components || {});
+      setBaseFromSize();
+      if (preset) document.getElementById("qBase").value = preset.base;
+      document.getElementById("presetStatus").textContent = preset ? "Cantidades guardadas cargadas. Doble aplica ×2 a los ingredientes." : "Esta combinación no tiene cantidades guardadas. Captúralas para cotizar.";
+    }
+
+    function renderQuoteSupply() {
+      const current = val("quoteSupply");
+      document.getElementById("quoteSupply").innerHTML = '<option value="">Selecciona un insumo</option>' +
+        db.insumos.map(s => `<option value="${esc(s.id)}">${esc(s.n)} · ${esc(s.p ?? "?")} ${esc(s.u)}</option>`).join('');
+      document.getElementById("quoteSupply").value = current;
+    }
+
+    function addSupplyExtra() {
+      const supply = db.insumos.find(s => s.id === val("quoteSupply"));
+      const issues = [];
+      const qty = inputNumber("quoteSupplyQty", issues, "Cantidad");
+      const cost = unitCost(supply);
+      if (cost === null) issues.push("Selecciona un insumo con precio y presentación completos.");
+      if (issues.length) { alert(issues.join("\n")); return; }
+      quoteExtras.push({name: supply.n + " · " + qty + " " + supply.u, insumoId: supply.id, u: supply.u, qty, cost: cost * qty});
+      document.getElementById("quoteSupplyQty").value = "";
+      renderQuoteSummary();
+    }
+
+    function renderComponents(saved) {
+      const previous = saved || readComponents();
+      document.getElementById("quoteComponents").innerHTML = COMPONENTS.map(([key, cat, selector]) => {
+        const flavor = selectedQuoteOption(cat, selector).label;
+        if (["Normal", "Sin relleno", "Sencillo"].includes(flavor)) return "";
+        const current = previous[key] || {};
+        const choices = componentChoices(key, flavor);
+        const allowed = current.source === "manual" || choices.some(o => o.source === current.source);
+        const source = allowed ? current.source : choices[0]?.source || "manual";
+        const recipe = db.recipes.find(r => "r-" + r.id === source);
+        const supply = db.insumos.find(s => "i-" + s.id === source);
+        const label = recipe ? "Cantidad de recetas completas" : supply ? "Cantidad de " + flavor + " (" + supply.u + ")" : "Costo de " + flavor + " ($)";
+        const hint = recipe ? "1 = receta completa; 0.5 = la mitad. Rendimiento de una receta: " + (recipe.yieldText || recipe.yield || "sin especificar") + "." : supply ? "Escribe la cantidad en " + supply.u + ". El costo se calcula con el precio guardado en Insumos." : "Escribe el costo total de este componente para un pastel de tamaño normal. Puedes asignar una receta a este sabor en Recetas.";
+        return `<details open><summary>${cat} · ${esc(flavor)}</summary>
+          ${choices.length ? `<label for="component-${key}">${recipe ? "Receta de " : "Presentación de "}${esc(flavor)}</label><select id="component-${key}" onchange="changeComponentSource('${key}')">${choices.map(o => `<option value="${esc(o.source)}" ${source === o.source ? "selected" : ""}>${esc(o.label)}</option>`).join('')}<option value="manual" ${source === "manual" ? "selected" : ""}>Ingresar costo manual</option></select>` : `<input id="component-${key}" type="hidden" value="manual" />`}
+          <label for="amount-${key}">${esc(label)}${key !== "diseno" ? " para " + esc(selectedSize().label) + " normal" : ""}</label>
+          <input id="amount-${key}" type="number" min="0" step="any" inputmode="decimal" placeholder="${recipe ? "Ej. 0.5" : supply ? "Ej. 100" : "Ej. 50.00"}" value="${esc(allowed ? current.qty ?? "" : "")}" oninput="renderQuoteSummary()" />
+          <p class="muted">${esc(hint)}${key !== "diseno" ? " Doble aplica ×2." : ""}</p>
+        </details>`;
+      }).join('');
+    }
+
+    function changeComponentSource(key) {
+      const current = readComponents();
+      current[key].qty = "";
+      renderComponents(current);
+      renderQuoteSummary();
+    }
+
+    function componentCost(key, option, issues) {
+      if (["Normal", "Sin relleno", "Sencillo"].includes(option.label)) return Number(option.cost || 0);
+      const source = val("component-" + key);
+      if (!source) { issues.push(option.label + ": elige receta, insumo o costo manual."); return null; }
+      if (source !== "manual" && !componentChoices(key, option.label).some(o => o.source === source)) {
+        issues.push(option.label + ": la receta o presentación elegida corresponde a otro ingrediente."); return null;
+      }
+      const qty = inputNumber("amount-" + key, issues, option.label);
+      let cost;
+      if (source === "manual") cost = qty;
+      else if (source.startsWith("r-")) {
+        const recipe = db.recipes.find(r => "r-" + r.id === source);
+        if (!recipe) { issues.push(option.label + ": receta no disponible."); return null; }
+        const result = recipeCost(recipe);
+        issues.push(...result.issues.map(issue => option.label + " — " + issue));
+        cost = result.total === null ? null : result.total * qty;
+      } else {
+        const supply = db.insumos.find(s => "i-" + s.id === source);
+        const price = unitCost(supply);
+        if (price === null) issues.push(option.label + ": precio del insumo pendiente.");
+        cost = price === null ? null : price * qty;
+      }
+      const multiplier = key !== "diseno" && document.getElementById("qDouble").checked ? 2 : 1;
+      return cost === null ? null : cost * multiplier + Number(option.cost || 0);
+    }
+
+    function refreshCosts() {
+      renderInsumos();
+      renderRecipes();
+      renderRecipeInsumoSelect();
+      renderComponents();
+      renderQuoteSupply();
+      renderQuoteSummary();
+    }
+
+    function updateInsumo(index) {
+      const old = db.insumos[index];
+      const rawPrice = val("price-" + index).trim();
+      const pr = rawPrice === "" ? null : Number(rawPrice);
+      const p = Number(val("pack-" + index));
+      const u = val("unit-" + index).trim();
+      if (!Number.isFinite(p) || p <= 0 || !u || (pr !== null && (!Number.isFinite(pr) || pr < 0))) {
+        alert("La presentación debe ser mayor a 0 y tener unidad. Precio: positivo, cero o vacío."); return;
+      }
+      const oldFactors = db.recipes.flatMap(r => r.ingredients.map(ing => [ing, ing.factor]));
+      const oldPresets = JSON.parse(JSON.stringify(db.quotePresets));
+      const unitChanged = unitKey(old.u) !== unitKey(u);
+      if (unitChanged) {
+        for (const [ing] of oldFactors) if (ing.insumoId === old.id) ing.factor = null;
+        for (const preset of Object.values(db.quotePresets)) for (const component of Object.values(preset.components || {})) {
+          if (component.source === "i-" + old.id) component.qty = "";
+        }
+      }
+      db.insumos[index] = {...old, pr, p, u};
+      if (!saveDB()) {
+        db.insumos[index] = old;
+        db.quotePresets = oldPresets;
+        for (const [ing, factor] of oldFactors) ing.factor = factor;
+        return;
+      }
+      if (unitChanged) {
+        for (const [key] of COMPONENTS) if (val("component-" + key) === "i-" + old.id) document.getElementById("amount-" + key).value = "";
+      }
+      refreshCosts();
+      alert("Precio guardado. Las recetas y cotizaciones nuevas usan este precio. Las cotizaciones guardadas conservan su importe.");
+    }
+
+    function updateBinding(ri, ii) {
+      const ing = db.recipes[ri].ingredients[ii];
+      const old = {...ing};
+      const id = val(`bind-${ri}-${ii}`);
+      const supply = db.insumos.find(s => s.id === id);
+      if (supply && !ingredientSupplies(ing.i).some(s => s.id === id)) { alert("Elige una presentación de " + ing.i + "."); return; }
+      const changed = ing.insumoId !== id;
+      ing.insumoId = id || null;
+      const raw = val(`factor-${ri}-${ii}`);
+      ing.factor = changed ? (supply && unitKey(supply.u) === unitKey(ing.u) ? 1 : null) : raw === "" ? null : Number(raw);
+      if (ing.factor !== null && (!Number.isFinite(ing.factor) || ing.factor <= 0)) {
+        Object.assign(ing, old); alert("La conversión debe ser mayor a 0."); return;
+      }
+      if (ing.qty === null) {
+        const qty = val(`qty-${ri}-${ii}`);
+        ing.costingQty = qty === "" ? null : Number(qty);
+        if (ing.costingQty !== null && (!Number.isFinite(ing.costingQty) || ing.costingQty < 0)) {
+          Object.assign(ing, old); alert("La cantidad debe ser mayor o igual a 0."); return;
+        }
+      }
+      if (!saveDB()) { Object.assign(ing, old); return; }
+      const open = [...document.querySelectorAll(".recipe-card")].map(el => el.open);
+      renderRecipes();
+      document.querySelectorAll(".recipe-card").forEach((el, i) => el.open = open[i]);
+      renderQuoteSummary();
+    }
+
+    function prepareDB(parsed) {
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw Error("Respaldo inválido");
+      if (![undefined, 1, 2].includes(parsed.schemaVersion)) throw Error("Versión de respaldo no compatible");
+      for (const key of ["insumos", "recipes", "sizes", "extras", "quotes", "orders", "sales"]) {
+        if (!Array.isArray(parsed[key])) throw Error("Falta " + key);
+      }
+      for (const item of [...parsed.recipes, ...parsed.quotes, ...parsed.orders, ...parsed.sales]) {
+        if (!item || typeof item.id !== "number" || !Number.isFinite(item.id)) throw Error("Identificador inválido");
+      }
+      if (!parsed.sizes.length || parsed.sizes.some(s => !s || typeof s.label !== "string")) throw Error("Tamaños inválidos");
+      if (parsed.insumos.some(s => !s || typeof s.n !== "string")) throw Error("Insumos inválidos");
+      if (parsed.recipes.some(r => typeof r.name !== "string" || !Array.isArray(r.ingredients))) throw Error("Recetas inválidas");
+      for (const r of parsed.recipes) for (const ing of r.ingredients) {
+        if (!ing || typeof ing.i !== "string" || typeof ing.u !== "string" ||
+          (ing.qty !== null && (typeof ing.qty !== "number" || !Number.isFinite(ing.qty) || ing.qty < 0)) ||
+          (ing.costingQty != null && (typeof ing.costingQty !== "number" || !Number.isFinite(ing.costingQty) || ing.costingQty < 0)) ||
+          (parsed.schemaVersion === 2 && ing.factor !== null && (typeof ing.factor !== "number" || !Number.isFinite(ing.factor) || ing.factor <= 0))) throw Error("Ingrediente inválido");
+      }
+      const base = seedCopy();
+      if (parsed.schemaVersion !== 2) {
+        return {...base, settings: {...base.settings, ...parsed.settings},
+          quotes: parsed.quotes, orders: parsed.orders, sales: parsed.sales, legacyData: parsed,
+          recipes: [...base.recipes, ...parsed.recipes.filter(r => r.id > 10000).map(r => ({...r,
+            ingredients: r.ingredients.map(ing => ({...ing, insumoId: null, factor: null}))}))]};
+      }
+      const ids = new Set();
+      for (const s of parsed.insumos) {
+        if (typeof s.id !== "string" || ids.has(s.id)) throw Error("Insumo duplicado o sin identificador");
+        if (s.pr !== null && (typeof s.pr !== "number" || !Number.isFinite(s.pr) || s.pr < 0)) throw Error("Precio inválido");
+        ids.add(s.id);
+      }
+      for (const extra of parsed.extras) if (!extra || typeof extra.cat !== "string" || typeof extra.option !== "string" || typeof extra.cost !== "number" || !Number.isFinite(extra.cost) || extra.cost < 0) throw Error("Extra inválido");
+      if (parsed.quotePresets && (typeof parsed.quotePresets !== "object" || Array.isArray(parsed.quotePresets))) throw Error("Cantidades guardadas inválidas");
+      return {...base, ...parsed, settings: {...base.settings, ...parsed.settings}};
+    }
+
+    init();
+  </script>
+</body>
+</html>
