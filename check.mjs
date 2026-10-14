@@ -130,4 +130,48 @@ assert.equal(run('receiveMCMRequests([{id:"cloud-2",data:request}]).imported'), 
 run('fillMCMRequest({...request, tamano:"30 cm"})');
 assert.equal(run('getQuotePayload(true).size'), '30 cm');
 assert.ok(run('calcQuote().issues.some(i=>i.includes("tamaño disponible"))'));
-console.log('Historical data, costs, hostile inputs, cloud intake, deduplication, editing preservation, incomplete drafts, approval, delivery and failed-storage retry verified.');
+// Cursor and page checks use only memory: no Firebase connection or billable reads.
+sandbox.cursor = {seconds:1780000000,nanoseconds:123,id:'cloud-3'};
+assert.equal(run('getMCMSyncCursor()'), null);
+assert.equal(run('receiveMCMRequests([{id:"cloud-3",data:request}],cursor).imported'),1);
+assert.equal(run('JSON.stringify(getMCMSyncCursor())'),JSON.stringify(sandbox.cursor));
+run('db=loadDB()');
+assert.equal(run('getMCMSyncCursor().id'),'cloud-3');
+assert.throws(()=>run('receiveMCMRequests([], {...cursor,seconds:-1})'));
+assert.throws(()=>run('prepareDB({...db,mcmCursor:{...cursor,nanoseconds:1000000000}})'));
+sandbox.localStorage.setItem=()=>{throw Error('disk full');};
+assert.throws(()=>run('receiveMCMRequests([{id:"cloud-4",data:request}],{...cursor,id:"cloud-4"})'));
+assert.equal(run('getMCMSyncCursor().id'),'cloud-3');
+assert.equal(run('db.mcmReceived.includes("cloud-4")'),false);
+sandbox.localStorage.setItem=(key,value)=>storage.set(key,value);
+const listeners=[];
+let authCallback;
+let stops=0;
+const moduleSandbox={console,document:sandbox.document,
+  initializeApp:()=>({}),getAuth:()=>({}),getFirestore:()=>({}),GoogleAuthProvider:class {},
+  signInWithPopup:async()=>{},signOut:async()=>{},onAuthStateChanged:(_,fn)=>{authCallback=fn;},
+  collection:(_,name)=>({collection:name}),documentId:()=>'__name__',orderBy:field=>({orderBy:field}),
+  limit:number=>({limit:number}),query:(...clauses)=>clauses,
+  Timestamp:class {constructor(seconds,nanoseconds){this.seconds=seconds;this.nanoseconds=nanoseconds;}},
+  startAfter:(time,id)=>({after:time,id}),
+  onSnapshot:(query,options,callback)=>{listeners.push({query,options,callback});return()=>{stops++;};},
+  window:{getMCMSyncCursor:()=>run('getMCMSyncCursor()'),receiveMCMRequests:(records,cursor)=>{
+    sandbox.pageRecords=records;sandbox.pageCursor=cursor;return run('receiveMCMRequests(pageRecords,pageCursor)');
+  }}};
+vm.createContext(moduleSandbox);
+vm.runInContext(fs.readFileSync(new URL('CCMMCM/mcm-sync.js',import.meta.url),'utf8').replace(/^import[\s\S]*?;\s*/gm,'').replace(/^export /gm,''),moduleSandbox);
+authCallback({email:'other@example.com',emailVerified:true});
+assert.equal(listeners.length,0);
+authCallback({email:'osvillat@gmail.com',emailVerified:true});
+assert.equal(listeners[0].query.at(-1).limit,50);
+assert.equal(listeners[0].query.at(-2).id,'cloud-3');
+assert.equal(listeners[0].query.at(-2).after.nanoseconds,123);
+const docs=Array.from({length:50},(_,i)=>({id:'page-'+String(i).padStart(2,'0'),data:()=>({...request,createdAt:{seconds:1780000001,nanoseconds:i}})}));
+listeners[0].callback({metadata:{fromCache:false},docs,size:50});
+assert.equal(listeners.length,2);
+assert.equal(stops,1);
+assert.equal(listeners[1].query.at(-2).id,'page-49');
+assert.equal(listeners[1].query.at(-2).after.nanoseconds,49);
+authCallback(null);
+assert.equal(stops,2);
+console.log('Historical data, costs, hostile inputs, intake, deduplication, editing preservation, approval, failed-storage retry and saved 50-request pagination verified locally. No Firebase connection.');

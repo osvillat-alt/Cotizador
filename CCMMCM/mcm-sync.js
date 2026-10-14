@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, query, orderBy, documentId, startAfter, limit, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // Public Firebase app identifiers, copied from MCM; authorization is enforced by Firestore rules.
 const app = initializeApp({
@@ -24,18 +24,24 @@ function listen(user) {
     return;
   }
   status("Recibiendo solicitudes de MCM…");
-  // ponytail: Scan the immutable inbox on reconnect; use a paginated cursor if its history grows large.
-  stop = onSnapshot(collection(cloud, "orderRequests"), {includeMetadataChanges: true}, snapshot => {
+  const cursor = window.getMCMSyncCursor();
+  const inbox = query(collection(cloud, "orderRequests"), orderBy("createdAt"), orderBy(documentId()),
+    ...(cursor ? [startAfter(new Timestamp(cursor.seconds, cursor.nanoseconds), cursor.id)] : []), limit(50));
+  // ponytail: Immutable requests let a saved server-time cursor avoid rereading history; 50 per page.
+  stop = onSnapshot(inbox, {includeMetadataChanges: true}, snapshot => {
     try {
       if (snapshot.metadata.fromCache) {
         status("Sin confirmación del servidor. Esperando conexión para recibir solicitudes.");
         return;
       }
-      // The full snapshot also retries any local save that previously failed.
-      const result = window.receiveMCMRequests(snapshot.docs.map(doc => ({id: doc.id, data: doc.data()})));
+      const last = snapshot.docs.at(-1);
+      const time = last?.data().createdAt;
+      const nextCursor = last ? {seconds: time.seconds, nanoseconds: time.nanoseconds, id: last.id} : null;
+      const result = window.receiveMCMRequests(snapshot.docs.map(doc => ({id: doc.id, data: doc.data()})), nextCursor);
       status("Conectado: " + user.email + ". " + result.pending + " vistas previas pendientes. " +
         (result.imported ? result.imported + " nuevas guardadas en este navegador. " : "") +
         (result.invalid ? result.invalid + " solicitudes inválidas sin importar." : ""));
+      if (snapshot.size === 50) listen(user);
     } catch (e) { status(e.message + " Pulsa Conectar con Google para reintentar."); }
   }, () => status("No se pudieron recibir pedidos. Revisa las reglas de Firebase y vuelve a conectar."));
 }

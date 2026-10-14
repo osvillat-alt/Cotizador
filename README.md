@@ -34,7 +34,9 @@ Cada solicitud genera una **vista previa pendiente** en **Cotizaciones guardadas
 
 Usa **Revisar y autorizar**, confirma figura y altura (el formulario no las solicita), completa costos y marca la revisión. **Autorizar y guardar** actualiza esa misma cotización; **Autorizar y crear pedido** conserva fecha, hora, teléfono y notas. Las vistas previas pendientes no se pueden compartir como cotización final ni convertir en pedidos. La recepción conserva el formulario que estuvieras editando.
 
-Los identificadores recibidos se guardan con el respaldo para evitar duplicados, incluso después de eliminar una vista previa. Las solicitudes originales quedan en Firebase; los precios, cálculos, autorizaciones y pedidos permanecen locales. Otro navegador genera su propia copia con sus propios precios. Restaurar un respaldo anterior a una solicitud o borrar todos los datos puede volver a importarla.
+Los identificadores recibidos y el punto de recepción (fecha del servidor + identificador) se guardan con el respaldo para evitar duplicados y volver a leer sólo las solicitudes nuevas. La consulta recibe hasta 50 solicitudes por página y pasa a la siguiente al completar el lote, sin descargar todo el historial en cada conexión. Las solicitudes originales quedan en Firebase; los precios, cálculos, autorizaciones y pedidos permanecen locales. Otro navegador genera su propia copia con sus propios precios. Restaurar un respaldo anterior a una solicitud o borrar todos los datos puede volver a importarla y consumir lecturas nuevamente.
+
+Esta integración no requiere Functions, Hosting de Firebase, IA ni funciones de Vercel. Una solicitud implica una escritura de Firestore; recibirla consume lecturas dentro de las cuotas del proyecto. Usar servicios existentes no garantiza gasto cero si el proyecto tiene facturación habilitada: mantén Spark si necesitas impedir excedentes facturables. El límite de 50 por consulta controla el tamaño de cada lote, no constituye un límite de facturación diario.
 
 ### Activación conjunta
 

@@ -4669,6 +4669,7 @@
       for (const extra of parsed.extras) if (!extra || typeof extra.cat !== "string" || typeof extra.option !== "string" || typeof extra.cost !== "number" || !Number.isFinite(extra.cost) || extra.cost < 0) throw Error("Extra inválido");
       if (parsed.quotePresets && (typeof parsed.quotePresets !== "object" || Array.isArray(parsed.quotePresets))) throw Error("Cantidades guardadas inválidas");
       if (parsed.mcmReceived && (!Array.isArray(parsed.mcmReceived) || parsed.mcmReceived.some(id => typeof id !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(id)))) throw Error("Solicitudes recibidas inválidas");
+      if (parsed.mcmCursor && !validMCMSyncCursor(parsed.mcmCursor)) throw Error("Punto de recepción inválido");
       for (const q of parsed.quotes) if (q.mcmRequest) validateMCMRequest(q.mcmRequest);
       return {...base, ...parsed, settings: {...base.settings, ...parsed.settings}};
     }
@@ -4742,7 +4743,18 @@
       applyQuotePreset();
     }
 
-    function receiveMCMRequests(records) {
+    function validMCMSyncCursor(cursor) {
+      return cursor && Number.isInteger(cursor.seconds) && cursor.seconds >= 0 && cursor.seconds <= 253402300799 &&
+        Number.isInteger(cursor.nanoseconds) && cursor.nanoseconds >= 0 && cursor.nanoseconds < 1000000000 &&
+        typeof cursor.id === "string" && /^[A-Za-z0-9_-]{1,128}$/.test(cursor.id);
+    }
+
+    function getMCMSyncCursor() {
+      return db.mcmCursor || null;
+    }
+
+    function receiveMCMRequests(records, cursor) {
+      if (cursor && !validMCMSyncCursor(cursor)) throw Error("Punto de recepción inválido");
       const fields = [...document.querySelectorAll("#tab-cotizar input[id], #tab-cotizar select[id], #tab-cotizar textarea[id]")]
         .map(el => ({id: el.id, value: el.value, checked: el.checked}));
       const previous = {request: mcmRequest, draftId: mcmDraftId, options: mcmOptions, extras: quoteExtras,
@@ -4757,6 +4769,7 @@
         const received = new Set(db.mcmReceived);
         const beforeQuotes = db.quotes.slice();
         const beforeReceived = db.mcmReceived.slice();
+        const beforeCursor = db.mcmCursor;
         for (const record of records) {
           if (received.has(record.id)) continue;
           let request;
@@ -4772,9 +4785,12 @@
           received.add(record.id);
           imported++;
         }
-        if (imported && !saveDB()) {
+        if (cursor) db.mcmCursor = {...cursor};
+        if ((imported || (cursor && JSON.stringify(cursor) !== JSON.stringify(beforeCursor))) && !saveDB()) {
           db.quotes = beforeQuotes;
           db.mcmReceived = beforeReceived;
+          if (beforeCursor) db.mcmCursor = beforeCursor;
+          else delete db.mcmCursor;
           throw Error("No se guardaron las vistas previas. Exporta un respaldo y vuelve a conectar para reintentar.");
         }
       } finally {
