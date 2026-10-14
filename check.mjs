@@ -99,6 +99,8 @@ run('shareQuote(db.quotes[0].id); quoteToOrder(db.quotes[0].id)');
 assert.equal(opened, 0);
 assert.equal(run('db.orders.length'), 9);
 run('loadQuote(db.quotes[0].id)');
+assert.equal(element('quoteSummaryCard').hidden, true);
+assert.equal(element('quoteSummary').innerHTML, '');
 assert.equal(run('getQuotePayload()'), null);
 element('mcmReviewed').checked = true;
 assert.equal(run('getQuotePayload()'), null); // Confirmation cannot bypass missing costs.
@@ -108,6 +110,9 @@ element('qMerma').value = '10';
 element('qMargen').value = '50';
 element('qRound').checked = true;
 assert.equal(run('calcQuote().precioFinal'), 100);
+run('renderQuoteSummary()');
+assert.equal(element('quoteSummaryCard').hidden, false);
+assert.ok(element('quoteSummary').innerHTML.includes('Precio final'));
 const draftId = run('db.quotes[0].id');
 run('saveQuote(true)');
 assert.equal(run('db.quotes.length'), 2);
