@@ -7,10 +7,11 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="referrer" content="no-referrer" />
   <!-- ponytail: inline handlers remain; escaping and backup validation protect their inputs. A future external API requires a server and a reviewed CSP. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://apis.google.com; style-src 'unsafe-inline'; connect-src https://*.googleapis.com https://*.firebaseapp.com https://www.gstatic.com https://apis.google.com; frame-src https://mcm-reposteria.firebaseapp.com; base-uri 'none'; form-action 'none'; object-src 'none'" />
   <title>MCM Pastelería</title>
 
   <style>
+    [hidden] { display: none !important; }
     :root {
       --bg: #f7f2ea;
       --card: #ffffff;
@@ -347,6 +348,19 @@
     <!-- ========================= -->
     <section id="tab-cotizar" class="tab active">
       <div class="card">
+        <h2>Pedidos desde MCM</h2>
+        <p class="muted">Conecta la cuenta administradora para recibir pedidos y guardar cotizaciones previas en este navegador.</p>
+        <button id="mcmConnect" class="btn secondary" onclick="connectMCM()">Conectar con Google</button>
+        <button id="mcmDisconnect" class="btn secondary" onclick="disconnectMCM()" hidden>Desconectar</button>
+        <p id="mcmStatus" class="muted" role="status" aria-live="polite">Sin conectar. Las cotizaciones locales siguen disponibles.</p>
+      </div>
+      <div id="mcmPreview" class="card" hidden>
+        <h2>Vista previa MCM · pendiente de autorización</h2>
+        <pre id="mcmDetails" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+        <p>Confirma figura y altura, revisa sabores, cantidades, decoración y precio.</p>
+        <label><input id="mcmReviewed" type="checkbox" style="width:auto" /> Revisé el pedido y los costos para autorizar esta cotización.</label>
+      </div>
+      <div class="card">
         <h2>Cliente</h2>
 
         <label for="qCliente">Nombre</label>
@@ -454,8 +468,8 @@
       </div>
 
       <div class="btn-row">
-        <button class="btn primary" onclick="saveQuote(false)">Guardar cotización</button>
-        <button class="btn secondary" onclick="saveQuote(true)">Guardar + pedido</button>
+        <button id="saveQuoteButton" class="btn primary" onclick="saveQuote(false)">Guardar cotización</button>
+        <button id="saveOrderButton" class="btn secondary" onclick="saveQuote(true)">Guardar + pedido</button>
       </div>
 
       <div class="btn-row">
@@ -3055,6 +3069,10 @@
     let db = null;
     let quoteExtras = [];
     let recipeIngredients = [];
+    let mcmRequest = null;
+    let mcmOptions = {};
+    let mcmDraftId = null;
+    let mcmConnection = null;
 
     function seedCopy() {
       return JSON.parse(JSON.stringify(SEED));
@@ -3177,6 +3195,9 @@
         if (existing) existing.cost = e.cost;
         else options.push({label: e.option, cost: e.cost});
       }
+      // ponytail: Unmapped or multiple fillings use manual costs; recipes can be assigned in Recetas.
+      const requested = mcmOptions[cat];
+      if (requested && !options.some(o => o.label === requested)) options.push({label: requested, cost: 0});
       return options;
     }
 
@@ -3208,6 +3229,11 @@
       });
 
       if (idx < 0) {
+        if (mcmRequest && selectedLabel === mcmRequest.tamano) {
+          el.innerHTML += '<option value="-1" disabled>' + esc(selectedLabel) + ' · selecciona un tamaño disponible</option>';
+          el.value = "-1";
+          return;
+        }
         idx = db.sizes.findIndex(function (s) {
           return String(s.label).includes("22");
         });
@@ -3281,6 +3307,7 @@
 
     function calcQuote() {
       const issues = [];
+      if (mcmRequest && !db.sizes[Number(val("qSize"))]) issues.push("Selecciona un tamaño disponible para el pedido.");
       const base = inputNumber("qBase", issues, "Otros costos");
       const parts = {};
       for (const [key, cat, selector] of COMPONENTS) {
@@ -3402,17 +3429,23 @@
       renderQuoteSummary();
     }
 
-    function getQuotePayload() {
+    function getQuotePayload(asDraft = false) {
+      if (!asDraft && mcmRequest && !document.getElementById("mcmReviewed").checked) {
+        alert("Revisa el pedido y marca la confirmación antes de autorizar o compartir.");
+        return null;
+      }
       const c = calcQuote();
-      if (c.issues.length) { alert(c.issues.join("\n")); return null; }
+      if (!asDraft && c.issues.length) { alert(c.issues.join("\n")); return null; }
 
       return {
-        id: uid(),
+        id: mcmDraftId || uid(),
         createdAt: new Date().toLocaleString("es-MX"),
         cliente: val("qCliente").trim() || "Cliente",
         notas: val("qNotas").trim(),
+        ...(mcmRequest ? {mcmRequest: {...mcmRequest}, sourceRequestId: db.quotes.find(q => q.id === mcmDraftId)?.sourceRequestId,
+          estado: asDraft ? "Pendiente" : "Autorizada", issues: c.issues} : {}),
 
-        size: c.size,
+        size: mcmRequest && Number(val("qSize")) < 0 ? mcmRequest.tamano : c.size,
         figura: c.figura, doble: c.doble,
         components: readComponents(),
         base: c.base,
@@ -3449,19 +3482,23 @@
       const q = getQuotePayload();
       if (!q) return;
 
-      db.quotes.unshift(q);
+      const previous = db.quotes.slice();
+      const existing = db.quotes.findIndex(item => item.id === q.id);
+      if (existing < 0) db.quotes.unshift(q);
+      else db.quotes[existing] = q;
 
       if (createOrder) {
         addOrderFromQuote(q, false);
       }
 
       if (!saveDB()) {
-        db.quotes.shift();
+        db.quotes = previous;
         if (createOrder) db.orders.shift();
         return;
       }
       renderQuotes();
       renderOrders();
+      resetMCMPreview();
 
       alert("Cotización guardada.");
     }
@@ -3480,7 +3517,7 @@
             <div class="quote-item">
               <div class="item-top">
                 <span>${esc(q.cliente)}</span>
-                <span>${fmt(q.precioFinal)}</span>
+                <span>${q.precioFinal === null ? "Costos por completar" : fmt(q.precioFinal)}</span>
               </div>
 
               <div class="muted">
@@ -3488,9 +3525,10 @@
               </div>
 
               ${q.notas ? `<div class="muted">${esc(q.notas)}</div>` : ""}
+              ${q.estado ? `<div class="notice">${q.estado === "Pendiente" ? "Vista previa · pendiente de autorización" : esc(q.estado)}${q.issues?.length ? "<ul>" + q.issues.map(i => "<li>" + esc(i) + "</li>").join("") + "</ul>" : ""}</div>` : ""}
 
               <div class="actions">
-                <button class="small-btn" onclick="loadQuote(${q.id})">Abrir</button>
+                <button class="small-btn" onclick="loadQuote(${q.id})">${q.estado === "Pendiente" ? "Revisar y autorizar" : "Abrir"}</button>
                 <button class="small-btn" onclick="shareQuote(${q.id})">WhatsApp</button>
                 <button class="small-btn" onclick="quoteToOrder(${q.id})">Pedido</button>
                 <button class="small-btn danger-small" onclick="deleteQuote(${q.id})">Eliminar</button>
@@ -3507,6 +3545,11 @@
       });
 
       if (!q) return;
+
+      mcmRequest = q.mcmRequest || null;
+      mcmDraftId = q.estado === "Pendiente" ? q.id : null;
+      mcmOptions = {Pan: q.pan, Consistencia: q.consistencia, Relleno: q.relleno, "Betún": q.betun, "Diseño": q.diseno};
+      renderMCMPreview();
 
       document.getElementById("qCliente").value = q.cliente || "";
       document.getElementById("qNotas").value = q.notas || "";
@@ -3595,13 +3638,16 @@
         return item.id === id;
       });
 
-      if (!q) return;
+      if (!q || !approvedQuote(q)) return;
 
       openWhatsApp(buildQuoteMessage(q));
     }
 
     function clearQuote() {
       if (!confirm("¿Limpiar formulario?")) return;
+
+      resetMCMPreview();
+      mcmOptions = {};
 
       document.getElementById("qCliente").value = "";
       document.getElementById("qNotas").value = "";
@@ -3633,8 +3679,9 @@
         id: uid(),
         name: q.cliente || "Cliente",
         cost: q.precioFinal,
-        date: new Date().toISOString().slice(0, 10),
-        time: new Date().toTimeString().slice(0, 5),
+        date: q.mcmRequest?.fechaEntrega || new Date().toISOString().slice(0, 10),
+        time: q.mcmRequest?.horaEntrega || new Date().toTimeString().slice(0, 5),
+        phone: q.mcmRequest?.telefonoCliente || "",
         product: q.size + " " + q.pan + " / " + q.relleno + " / " + q.betun,
         pan: q.pan,
         betun: q.betun,
@@ -3654,7 +3701,7 @@
         return item.id === id;
       });
 
-      if (!q) return;
+      if (!q || !approvedQuote(q)) return;
 
       addOrderFromQuote(q, true);
       alert("Pedido creado desde la cotización.");
@@ -4621,10 +4668,165 @@
       }
       for (const extra of parsed.extras) if (!extra || typeof extra.cat !== "string" || typeof extra.option !== "string" || typeof extra.cost !== "number" || !Number.isFinite(extra.cost) || extra.cost < 0) throw Error("Extra inválido");
       if (parsed.quotePresets && (typeof parsed.quotePresets !== "object" || Array.isArray(parsed.quotePresets))) throw Error("Cantidades guardadas inválidas");
+      if (parsed.mcmReceived && (!Array.isArray(parsed.mcmReceived) || parsed.mcmReceived.some(id => typeof id !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(id)))) throw Error("Solicitudes recibidas inválidas");
+      if (parsed.mcmCursor && !validMCMSyncCursor(parsed.mcmCursor)) throw Error("Punto de recepción inválido");
+      for (const q of parsed.quotes) if (q.mcmRequest) validateMCMRequest(q.mcmRequest);
       return {...base, ...parsed, settings: {...base.settings, ...parsed.settings}};
+    }
+
+    function approvedQuote(q) {
+      if (q.estado === "Pendiente" || q.precioFinal === null) {
+        alert("Abre la vista previa, completa los costos y autoriza la cotización antes de compartirla o crear un pedido.");
+        return false;
+      }
+      return true;
+    }
+
+    function resetMCMPreview() {
+      mcmRequest = null;
+      mcmDraftId = null;
+      renderMCMPreview();
+    }
+
+    function renderMCMPreview() {
+      document.getElementById("mcmPreview").hidden = !mcmRequest;
+      document.getElementById("mcmReviewed").checked = false;
+      document.getElementById("mcmDetails").textContent = mcmRequest ? mcmRequestNotes(mcmRequest) : "";
+      document.getElementById("saveQuoteButton").textContent = mcmRequest ? "Autorizar y guardar" : "Guardar cotización";
+      document.getElementById("saveOrderButton").textContent = mcmRequest ? "Autorizar y crear pedido" : "Guardar + pedido";
+    }
+
+    function validateMCMRequest(data) {
+      if (!data || data.version !== 1 || !Array.isArray(data.rellenos) || data.rellenos.length > 9 ||
+          data.rellenos.some(s => typeof s !== "string" || !s.trim() || s.length > 80)) throw Error("Solicitud inválida");
+      const fields = ["tamano", "saborPan", "consistencia", "betun", "detalleFruta", "detallesLogo",
+        "imagenReferencia", "fraseFondant", "fechaEntrega", "horaEntrega", "nombreCliente", "telefonoCliente", "comentariosAdicionales"];
+      const request = {version: 1, rellenos: [...new Set(data.rellenos)]};
+      for (const key of fields) {
+        if (typeof data[key] !== "string" || data[key].length > 1000) throw Error("Campo inválido: " + key);
+        request[key] = data[key].trim();
+      }
+      if (["tamano", "saborPan", "consistencia", "betun", "nombreCliente", "telefonoCliente"].some(k => !request[k])) throw Error("Solicitud incompleta");
+      if (request.fechaEntrega && (!/^\d{4}-\d{2}-\d{2}$/.test(request.fechaEntrega) ||
+          new Date(request.fechaEntrega).toISOString().slice(0, 10) !== request.fechaEntrega)) throw Error("Fecha inválida");
+      if (request.horaEntrega && !/^([01]\d|2[0-3]):[0-5]\d$/.test(request.horaEntrega)) throw Error("Hora inválida");
+      return request;
+    }
+
+    function mcmRequestNotes(r) {
+      return [["Nombre", r.nombreCliente], ["Teléfono", r.telefonoCliente], ["Tamaño", r.tamano],
+        ["Pan", r.saborPan], ["Consistencia", r.consistencia], ["Betún", r.betun], ["Rellenos", r.rellenos.join(", ") || "Sin relleno"],
+        ["Fruta / otro", r.detalleFruta], ["Diseño", r.detallesLogo], ["Referencia", r.imagenReferencia === "[IMAGEN_LOCAL]" ? "Adjuntar en WhatsApp" : r.imagenReferencia],
+        ["Texto", r.fraseFondant], ["Entrega", [r.fechaEntrega, r.horaEntrega].filter(Boolean).join(" ")],
+        ["Comentarios", r.comentariosAdicionales]].filter(([,value]) => value).map(([label,value]) => label + ": " + value).join("\n") +
+        "\nFigura y altura no especificadas: confirmar antes de autorizar.";
+    }
+
+    function fillMCMRequest(r) {
+      mcmRequest = r;
+      mcmDraftId = null;
+      const rellenos = r.rellenos.map(s => s === "Chantilly" && r.betun === "Chantilly" ? "Betún" : ({Nutella: "Crema de avellana"})[s] || s);
+      mcmOptions = {Pan: normalizedName(r.saborPan) === "red velvet" ? "Redvelvet" : r.saborPan,
+        Consistencia: r.consistencia === "Seco" ? "Normal" : r.consistencia,
+        Relleno: rellenos.join(" + ") || "Sin relleno", "Betún": r.betun,
+        "Diseño": r.detallesLogo || r.fraseFondant || r.imagenReferencia ? "Personalizado" : "Sencillo"};
+      document.getElementById("qCliente").value = r.nombreCliente;
+      document.getElementById("qNotas").value = mcmRequestNotes(r);
+      fillSizeSelect(r.tamano);
+      for (const [, cat, id] of COMPONENTS) fillQuoteSelect(id, cat, mcmOptions[cat]);
+      // ponytail: The public form omits shape/height; preview defaults need explicit owner confirmation.
+      document.getElementById("qFigura").value = "Redondo";
+      document.getElementById("qFiguraOtra").value = "";
+      document.getElementById("qDouble").checked = false;
+      quoteExtras = [];
+      applySettingsToQuoteForm();
+      applyQuotePreset();
+    }
+
+    function validMCMSyncCursor(cursor) {
+      return cursor && Number.isInteger(cursor.seconds) && cursor.seconds >= 0 && cursor.seconds <= 253402300799 &&
+        Number.isInteger(cursor.nanoseconds) && cursor.nanoseconds >= 0 && cursor.nanoseconds < 1000000000 &&
+        typeof cursor.id === "string" && /^[A-Za-z0-9_-]{1,128}$/.test(cursor.id);
+    }
+
+    function getMCMSyncCursor() {
+      return db.mcmCursor || null;
+    }
+
+    function receiveMCMRequests(records, cursor) {
+      if (cursor && !validMCMSyncCursor(cursor)) throw Error("Punto de recepción inválido");
+      const fields = [...document.querySelectorAll("#tab-cotizar input[id], #tab-cotizar select[id], #tab-cotizar textarea[id]")]
+        .map(el => ({id: el.id, value: el.value, checked: el.checked}));
+      const previous = {request: mcmRequest, draftId: mcmDraftId, options: mcmOptions, extras: quoteExtras,
+        components: readComponents(), size: mcmRequest && Number(val("qSize")) < 0 ? mcmRequest.tamano : selectedSize().label,
+        labels: Object.fromEntries(COMPONENTS.map(([,cat,id]) => [cat, selectedQuoteOption(cat,id).label]))};
+      let imported = 0;
+      let invalid = 0;
+      try {
+        // Re-read before merging so cloud intake cannot overwrite newer local saves from another tab.
+        db = loadDB();
+        db.mcmReceived ||= [];
+        const received = new Set(db.mcmReceived);
+        const beforeQuotes = db.quotes.slice();
+        const beforeReceived = db.mcmReceived.slice();
+        const beforeCursor = db.mcmCursor;
+        for (const record of records) {
+          if (received.has(record.id)) continue;
+          let request;
+          try {
+            if (!/^[A-Za-z0-9_-]{1,128}$/.test(record.id)) throw Error("Identificador inválido");
+            request = validateMCMRequest(record.data);
+          } catch (e) { invalid++; continue; }
+          fillMCMRequest(request);
+          const quote = getQuotePayload(true);
+          quote.sourceRequestId = record.id;
+          db.quotes.unshift(quote);
+          db.mcmReceived.push(record.id);
+          received.add(record.id);
+          imported++;
+        }
+        if (cursor) db.mcmCursor = {...cursor};
+        if ((imported || (cursor && JSON.stringify(cursor) !== JSON.stringify(beforeCursor))) && !saveDB()) {
+          db.quotes = beforeQuotes;
+          db.mcmReceived = beforeReceived;
+          if (beforeCursor) db.mcmCursor = beforeCursor;
+          else delete db.mcmCursor;
+          throw Error("No se guardaron las vistas previas. Exporta un respaldo y vuelve a conectar para reintentar.");
+        }
+      } finally {
+        mcmRequest = previous.request;
+        mcmDraftId = previous.draftId;
+        mcmOptions = previous.options;
+        quoteExtras = previous.extras;
+        fillSizeSelect(previous.size);
+        for (const [,cat,id] of COMPONENTS) fillQuoteSelect(id, cat, previous.labels[cat]);
+        renderComponents(previous.components);
+        for (const field of fields) {
+          const el = document.getElementById(field.id);
+          if (el) { el.value = field.value; el.checked = field.checked; }
+        }
+        renderQuoteSummary();
+        renderQuotes();
+      }
+      return {imported, invalid, pending: db.quotes.filter(q => q.estado === "Pendiente").length};
+    }
+
+    async function connectMCM() {
+      const button = document.getElementById("mcmConnect");
+      button.disabled = true;
+      try {
+        mcmConnection ||= await import("./mcm-sync.js");
+        await mcmConnection.connect(receiveMCMRequests);
+      } catch (e) { document.getElementById("mcmStatus").textContent = "No se pudo conectar. Revisa conexión, dominio autorizado y reglas de Firebase."; }
+      finally { button.disabled = false; }
+    }
+
+    async function disconnectMCM() {
+      if (mcmConnection) await mcmConnection.disconnect();
     }
 
     init();
   </script>
+  <script type="module" src="./mcm-sync.js"></script>
 </body>
 </html>
